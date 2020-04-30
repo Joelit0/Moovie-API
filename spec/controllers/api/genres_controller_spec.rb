@@ -5,7 +5,8 @@ RSpec.describe GenresController, type: :controller do
     before do
       genre = create(:genre)
       get :index
-    end  
+    end
+
     it "returns http success" do
       expect(response).to have_http_status(:success)
     end
@@ -13,5 +14,10 @@ RSpec.describe GenresController, type: :controller do
       json_response = JSON.parse(response.body)
       expect(json_response.first.keys).to match_array(["id","name", "created_at", "updated_at"])
     end
+    it "response with JSON body containing expected genres" do
+      json_response = JSON.parse(response.body)
+      expect(json_response.first['name']).to eq('Horror')
+    end
+
   end
 end
