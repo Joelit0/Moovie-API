@@ -5,16 +5,13 @@ class MoviesController < ApplicationController
     
     if params[:sort].present?
       @movies = Movie.all.where(nil).order(title: params[:sort])
-      
-      render json: @movies, status: :ok
-    else
-      render json: @movies, status: :ok
-    end
-    
-    if params[:release_date].present?
+    elsif params[:release_date].present?
       @movies = Movie.all.where(nil).order(release_date: params[:release_date])
+    end
 
+    render json: @movies, status: :ok 
   end
+  
   def show 
     @movie = Movie.find(params[:id])
 
