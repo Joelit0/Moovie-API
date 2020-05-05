@@ -1,0 +1,9 @@
+development:
+    adapter: postgresql
+    database: moovie_db_development
+    host: localhost
+
+test: 
+    adapter: postgresql
+    database: moovie_db_test
+    host: localhost
