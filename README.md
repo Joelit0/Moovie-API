@@ -1,4 +1,4 @@
 # Moovie-API
-## Implement the first endpoint
+## Implement endpoints
 
-Implement "Get genres" operation. This includes adding migrations, seeds, models, routes and tests.
+Implement operations. This includes adding migrations, seeds, models, routes and tests.
