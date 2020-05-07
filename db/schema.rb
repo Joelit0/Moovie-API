@@ -35,10 +35,12 @@ ActiveRecord::Schema.define(version: 2020_05_05_181747) do
 
   create_table "videos", force: :cascade do |t|
     t.integer "size"
-    t.string "type"
+    t.string "format"
     t.string "url"
+    t.bigint "movie_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["movie_id"], name: "index_videos_on_movie_id"
   end
 
 end
