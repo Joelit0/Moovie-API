@@ -16,7 +16,7 @@ RSpec.describe GenresController, type: :controller do
     end
     it "response with JSON body containing expected genres" do
       json_response = JSON.parse(response.body)
-      expect(json_response.first['name']).to eq('MyString')
+      expect(json_response.first['name']).to eq('Horror')
     end
   end
 end
