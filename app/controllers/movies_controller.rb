@@ -5,12 +5,6 @@ class MoviesController < ApplicationController
     @movies = Movie.all.order(attribute => order).paginate(page: params[:page], per_page: 20)
     @movies = @movies.filter_by_title(params[:title]) if params[:title].present?
     
-    # if params[:sort].present?
-    #   @movies = Movie.all.order(title: params[:sort])
-    # elsif params[:release_date].present?
-    #   @movies = Movie.all.order(release_date: params[:release_date])
-    # end
-
     render json: @movies, status: :ok 
   end
 
