@@ -2,8 +2,12 @@ class MoviesController < ApplicationController
   def index
     attribute = params["sort_by"] || :title
     order = params["sort_order"] || :asc
-    @movies = Movie.all.order(attribute => order).paginate(page: params[:page], per_page: 20)
-    @movies = @movies.filter_by_title(params[:title]) if params[:title].present?
+   
+    if params[:title].present?
+      @movies = Movie.filter_by_title(params[:title]) 
+    else
+      @movies = Movie.all.order(attribute => order).paginate(page: params[:page], per_page: 20)
+    end
     
     render json: @movies, status: :ok 
   end
