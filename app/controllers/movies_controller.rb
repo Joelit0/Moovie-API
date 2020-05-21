@@ -4,7 +4,7 @@ class MoviesController < ApplicationController
     order = params["sort_order"] || :asc
    
     if params[:title].present?
-      @movies = Movie.filter_by_title(params[:title]) 
+      @movies = Movie.filter_by_title(params[:title]).order(attribute => order).paginate(page: params[:page], per_page: 20)
     else
       @movies = Movie.all.order(attribute => order).paginate(page: params[:page], per_page: 20)
     end
