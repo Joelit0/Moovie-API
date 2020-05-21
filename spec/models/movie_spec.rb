@@ -10,36 +10,45 @@ RSpec.describe Movie, type: :model do
                           backdrop_url: "https://m.media-amazon.com/images",
                           imdb_id: "3782")}
 
-  it "is valid with valid attributes" do
-    expect(subject).to be_valid
+  context "when valid" do
+    it "is valid with valid attributes" do
+      expect(subject).to be_valid
+    end
   end
-  
-  it "is not valid without a title" do
-    subject.title = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a tagline" do
-    subject.tagline = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a overview" do
-    subject.overview = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a release_date" do
-    subject.release_date = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a poster_url" do
-    subject.poster_url = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a backdrop_url" do
-    subject.backdrop_url = nil
-    expect(subject).to_not be_valid
-  end
-  it "is not valid without a imdb_id" do
-    subject.imdb_id = nil
-    expect(subject).to_not be_valid
+  context "when invalid" do
+    it "is not valid without a title" do
+      subject.title = nil
+      expect(subject).to_not be_valid
+    end
+
+    it "is not valid without a tagline" do
+      subject.tagline = nil
+      expect(subject).to_not be_valid
+    end
+
+    it "is not valid without a overview" do
+      subject.overview = nil
+      expect(subject).to_not be_valid
+    end
+
+    it "is not valid without a release_date" do
+      subject.release_date = nil
+      expect(subject).to_not be_valid
+    end
+
+    it "is not valid without a poster_url" do
+      subject.poster_url = nil
+      expect(subject).to_not be_valid
+    end
+
+    it "is not valid without a backdrop_url" do
+      subject.backdrop_url = nil
+      expect(subject).to_not be_valid
+    end
+    
+    it "is not valid without a imdb_id" do
+      subject.imdb_id = nil
+      expect(subject).to_not be_valid
+    end
   end
 end
