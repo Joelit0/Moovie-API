@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe GenresController, type: :controller do
   describe "GET #index" do
-    context "when all the genres are obtained correctly" do
+    context "when valid" do
       before do
         genre = create(:genre)
         get :index
@@ -19,6 +19,21 @@ RSpec.describe GenresController, type: :controller do
 
       it "response with JSON body containing expected genres" do
         expect(@json_response.first['name']).to eq('Horror')
+      end
+    end
+    context "when invalid" do
+      before do
+        genre = create(:genre)
+        get :index
+        @json_response = JSON.parse(response.body)
+      end
+      
+      it "JSON body response contains invalid genre attributes" do
+        expect(@json_response.first.keys).to_not match_array(["invalid key","invalid key", "invalid key", "invalid key"])
+      end
+     
+      it "response with JSON body containing invalid genres" do
+        expect(@json_response.first['name']).to_not eq('Invalid Genre')
       end
     end
   end
