@@ -8,6 +8,8 @@ gem 'rails', '~> 6.0.2', '>= 6.0.2.2'
 gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 4.1'
+# Devise
+gem 'devise'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
