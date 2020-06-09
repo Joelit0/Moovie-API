@@ -31,6 +31,7 @@ RSpec.describe GenresController, type: :controller do
         @token = JsonWebToken.encode(user_id: @user.id)
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :index, format: :json
+
         @json_response = JSON.parse(response.body)
       end
       
