@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
-  # include ApiHelper
-  # authenticated_header(request, user)
   describe "GET #index" do
     context "when valid" do 
       context "when all the users are obtained correctly" do
