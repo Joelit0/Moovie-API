@@ -10,7 +10,11 @@ class UsersController < ApplicationController
   def show
     @user = User.where(id: params[:id]).first
 
-    render json: @user.as_json(except: %i[created_at updated_at]), status: :ok
+    if @user
+      render json: @user.as_json(except: %i[created_at updated_at]), status: :ok
+    else
+      render json: {status: 'ERROR', message: 'The user does not exist'},status: :unprocessable_entity
+    end
   end
 
   def create
@@ -26,10 +30,14 @@ class UsersController < ApplicationController
   def destroy 
     @user = User.where(id: params[:id]).first
 
-    if @user.destroy
-      render json: {status: 'SUCCES', message: 'The user has been deleted'}, status: :ok
+    if @user
+      if @user.destroy
+        render json: {status: 'SUCCES', message: 'The user has been deleted'}, status: :ok
+      else
+        render json: {status: 'ERROR', message: 'The user could not be removed'},status: :unprocessable_entity
+      end
     else
-      render json: {status: 'ERROR', message: 'The user could not be removed'},status: :unprocessable_entity
+      render json: {status: 'ERROR', message: 'The user does not exist'},status: :unprocessable_entity
     end
   end
 
