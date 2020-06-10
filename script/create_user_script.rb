@@ -3,11 +3,6 @@ require 'uri'
 require 'json'
 
 MOOVIE_API_URL = "http://localhost:3001/users"
-EMAIL_TAKEN = [ "has already been taken", "has already been taken" ]
-EMAIL_INVALID = [ "is invalid", "is invalid" ]
-SHORT_PASSWORD = [ "is too short (minimum is 6 characters)", "is too short (minimum is 6 characters)" ]
-STATUS_ERROR = 'ERROR'
-STATUS_SUCCES = 'SUCCES'
 
 puts "*Ingrese su nombre completo"
 puts '==============================================================='
@@ -41,24 +36,24 @@ end
 
 data = JSON.parse(response.body)
 
-if data['data']['email'] == EMAIL_TAKEN
+if data['data']['email'] == ["has already been taken"]
   puts 'Email: The email has already been taken'
-elsif data['data']['email'] ==EMAIL_INVALID
+elsif data['data']['email'] == ["is invalid"]
   puts 'Email: The email format is not valid'
 else
   puts 'Email: Correct'
 end
 
-if data['data']['password'] == SHORT_PASSWORD
+if data['data']['password'] == ["is too short (minimum is 6 characters)"]
   puts 'Password: Your password is too short(minimum is 6 characters)'
 else
   puts 'Password: Correct'
 end
 puts '==============================================================='
 
-if data['status'] == STATUS_ERROR
+if data['status'] == 'ERROR'
   puts '--Please check your fields--'
-elsif data['status'] == STATUS_SUCCES
+elsif data['status'] == 'SUCCES'
   puts '++The user has been created successfully++'
 else
   puts '\Please check your connection/'
