@@ -1,17 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe GenresController, type: :controller do
+  before do
+    @genre = create(:genre)
+    @user = create(:user)
+    @token = JsonWebToken.encode(user_id: @user.id)
+  end
   describe "GET #index" do
+    before do
+      genre = create(:genre)
+      request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+      get :index, format: :json
+
+      @json_response = JSON.parse(response.body)
+    end
     context "when valid" do
-      before do
-        genre = create(:genre)
-        @user = create(:user)
-        @token = JsonWebToken.encode(user_id: @user.id)
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        get :index, format: :json
-        @json_response = JSON.parse(response.body)
-      end
-      
       it "returns http success" do
         expect(response).to have_http_status(:success)
       end
@@ -25,16 +28,6 @@ RSpec.describe GenresController, type: :controller do
       end
     end
     context "when invalid" do
-      before do
-        genre = create(:genre)
-        @user = create(:user)
-        @token = JsonWebToken.encode(user_id: @user.id)
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        get :index, format: :json
-
-        @json_response = JSON.parse(response.body)
-      end
-      
       it "JSON body response contains invalid genre attributes" do
         expect(@json_response.first.keys).to_not match_array(["invalid key","invalid key", "invalid key", "invalid key"])
       end

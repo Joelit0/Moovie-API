@@ -1,17 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
+  before do 
+    @user = create(:user)
+    @token = JsonWebToken.encode(user_id: @user.id)
+  end
   describe "GET #index" do
+    before do
+      request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+      get :index, format: :json
+      @json_response = JSON.parse(response.body)
+    end
     context "when valid" do 
       context "when all the users are obtained correctly" do
-        before do
-          @user = create(:user)
-          @token = JsonWebToken.encode(user_id: @user.id)
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          get :index, format: :json
-          @json_response = JSON.parse(response.body)
-        end
-
         it "returns http success" do
           expect(response).to have_http_status(:success)
         end
@@ -35,13 +36,6 @@ RSpec.describe UsersController, type: :controller do
     end
     context "when invalid" do
       context "when it returns the unexpected users" do
-        before do
-          @user = create(:user)
-          @token = JsonWebToken.encode(user_id: @user.id)
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          get :index, format: :json
-          @json_response = JSON.parse(response.body)
-        end
 
         it "JSON body response contains invalid movies attributes" do
           expect(@json_response.first.keys).to_not match_array(["invalidKey","invalidKey", "invalidKey", "invalidKey"])
@@ -64,8 +58,6 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET #show" do
     before do
-      @user = create(:user)
-      @token = JsonWebToken.encode(user_id: @user.id)
       request.headers["AUTHORIZATION"] = "Bearer #{@token}"
       get :show, format: :json ,params: { id: @user.id }
       @json_response = JSON.parse(response.body)
@@ -140,8 +132,6 @@ RSpec.describe UsersController, type: :controller do
   end
   describe "DELETE #destroy" do
     before do 
-      @user = create(:user)
-      @token = JsonWebToken.encode(user_id: @user.id)
       request.headers["AUTHORIZATION"] = "Bearer #{@token}"
       delete :destroy, format: :json, params: { id: @user.id }
       @json_response = JSON.parse(response.body)
