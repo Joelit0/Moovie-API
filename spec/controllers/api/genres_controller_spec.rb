@@ -30,9 +30,9 @@ RSpec.describe GenresController, type: :controller do
       before do
         get :index, format: :json
         @json_response = JSON.parse(response.body)
-        @nil_token = {"errors"=>"Nil JSON web token"}
+        @nil_token = { "errors"=>"Nil JSON web token" }
       end
-      it "nil JWT token" do
+      it "it returns an error if token is nil" do
         expect(@json_response).to eq(@nil_token)
       end
     end
