@@ -37,9 +37,14 @@ RSpec.describe UsersController, type: :controller do
         before do
           get :index, format: :json
           @json_response = JSON.parse(response.body)
-          @nil_token = { "errors"=>"Nil JSON web token" }
+          @nil_token = { "errors" => "Nil JSON web token" }
         end
-        it "it returns an error if token is nil" do
+
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        
+        it "returns an error if token is nil" do
           expect(@json_response).to eq(@nil_token)
         end
       end
@@ -50,7 +55,7 @@ RSpec.describe UsersController, type: :controller do
     context "when valid" do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        get :show, format: :json ,params: { id: @user.id }
+        get :show, format: :json, params: { id: @user.id }
         @json_response = JSON.parse(response.body)
       end
 
@@ -62,15 +67,15 @@ RSpec.describe UsersController, type: :controller do
         expect(@json_response.keys).to match_array(["id", "email", "full_name", "photo_path"])
       end
       
-      it "response with JSON body containing expected user email" do
+      it "JSON body response contains expected user email" do
         expect(@json_response['email']).to eq('test@gmail.com')
       end
 
-      it "response with JSON body containing expected user full_name" do
+      it "JSON body response contains expected user full_name" do
         expect(@json_response['full_name']).to eq('Joel Alayon')
       end
 
-      it "response with JSON body containing expected user photo_path" do
+      it "JSON body response contains expected user photo_path" do
         expect(@json_response['photo_path']).to eq('www.url.com')
       end
     end
@@ -79,25 +84,26 @@ RSpec.describe UsersController, type: :controller do
         before do
           get :show, format: :json ,params: { id: @user.id }
           @json_response = JSON.parse(response.body)
-          @nil_token = { "errors"=>"Nil JSON web token" }
+          @nil_token = { "errors" => "Nil JSON web token" }
         end
-        it "it returns an error if token is nil" do
+       
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns an error if token is nil" do
           expect(@json_response).to eq(@nil_token)
         end
       end
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          get :show, format: :json ,params: { id: "false_id" }
+          get :show, format: :json, params: { id: "false_id" }
           @json_response = JSON.parse(response.body)
         end
         
         it "returns http not found" do
           expect(response).to have_http_status(:not_found)
-        end
-        
-        it "The user could not be displayed" do
-          expect(@json_response['status']).to eq('ERROR')
         end
         
         it "The user does not exist" do
@@ -108,10 +114,10 @@ RSpec.describe UsersController, type: :controller do
   end
   describe "POST #Create" do
     before do 
-      @created_user = { "status"=>"SUCCES", "message"=>"Created user", "data"=>{"id"=>307, "email"=>"joelito@gmail.com", "full_name"=>"Joelito Alayon"} }
-      @not_created_user = { "status"=>"ERROR", "message"=>"User not created"}
-      @taken_email = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "email"=>"has already been taken" } }
-      @short_password = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "password"=>"is too short (minimum is 6 characters)"} }
+      @created_user = { "message" => "Created user", "data" => { "id"=>307, "email" => "joelito@gmail.com", "full_name" => "Joelito Alayon" } }
+      @not_created_user = { "message" => "User not created" }
+      @taken_email = { "message" => "User not created", "data" => { "email" => "has already been taken" } }
+      @short_password = { "message" => "User not created", "data" => { "password" => "is too short (minimum is 6 characters)" } }
     end
     context "when valid" do
       it "The user has been created successfully" do
@@ -139,7 +145,7 @@ RSpec.describe UsersController, type: :controller do
       end
 
       it "The user has been deleted successfully" do
-        expect(@json_response['status']).to eq('SUCCES')
+        expect(@json_response['message']).to eq('The user has been deleted')
       end
     end
     context "when invalid" do
@@ -147,10 +153,14 @@ RSpec.describe UsersController, type: :controller do
         before do 
           delete :destroy, format: :json, params: { id: @user.id }
           @json_response = JSON.parse(response.body)
-          @nil_token = { "errors"=>"Nil JSON web token" }
+          @nil_token = { "errors" => "Nil JSON web token" }
         end
 
-        it "it returns an error if token is nil" do
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns an error if token is nil" do
           expect(@json_response).to eq(@nil_token)
         end
         
@@ -163,10 +173,6 @@ RSpec.describe UsersController, type: :controller do
           
           it "returns http not found" do
             expect(response).to have_http_status(:not_found)
-          end
-          
-          it "The user has not been deleted" do
-            expect(@json_response['status']).to eq('ERROR')
           end
           
           it "The user does not exist" do

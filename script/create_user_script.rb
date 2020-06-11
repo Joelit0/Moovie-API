@@ -51,9 +51,9 @@ else
 end
 puts '==============================================================='
 
-if data['status'] == 'ERROR'
+if response.code == "422"
   puts '--Please check your fields--'
-elsif data['status'] == 'SUCCES'
+elsif response.code == "202"
   puts '++The user has been created successfully++'
 else
   puts '\Please check your connection/'

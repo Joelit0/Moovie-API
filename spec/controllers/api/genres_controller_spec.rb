@@ -22,7 +22,7 @@ RSpec.describe GenresController, type: :controller do
         expect(@json_response.first.keys).to match_array(["id","name", "created_at", "updated_at"])
       end
 
-      it "response with JSON body containing expected genres" do
+      it "JSON body response contains expected genres" do
         expect(@json_response.first['name']).to eq('Horror')
       end
     end
@@ -30,9 +30,14 @@ RSpec.describe GenresController, type: :controller do
       before do
         get :index, format: :json
         @json_response = JSON.parse(response.body)
-        @nil_token = { "errors"=>"Nil JSON web token" }
+        @nil_token = { "errors" => "Nil JSON web token" }
       end
-      it "it returns an error if token is nil" do
+      
+      it "returns http unauthorized" do
+        expect(response).to have_http_status(:unauthorized)
+      end
+      
+      it "returns an error if token is nil" do
         expect(@json_response).to eq(@nil_token)
       end
     end
