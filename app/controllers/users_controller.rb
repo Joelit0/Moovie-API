@@ -13,11 +13,10 @@ class UsersController < ApplicationController
     if @user
       render json: @user.as_json(except: %i[created_at updated_at]), status: :ok
     else
-      render 
-        json: {
-          message: 'The user does not exist' 
-        },
-        status: :not_found
+      render json: { 
+        message: 'The user does not exist' 
+      },
+      status: :not_found
     end
   end
 
@@ -25,19 +24,17 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render
-        json: { 
-          message: 'Created user',
-          data: @user.as_json(except: %i[created_at updated_at photo_path]) 
-        },
-        status: :created
+      render json: { 
+        message: 'Created user',
+        data: @user.as_json(except: %i[created_at updated_at photo_path])
+      }, 
+      status: :created
     else
-      render 
-        json: {
-          message: 'User not created',
-          data: @user.errors
-        },
-        status: :unprocessable_entity
+      render json: { 
+        message: 'User not created',
+        data: @user.errors
+      },
+      status: :unprocessable_entity
     end
   end
 
@@ -46,24 +43,21 @@ class UsersController < ApplicationController
 
     if @user
       if @user.destroy
-        render 
-          json: {
-            message: 'The user has been deleted' 
-          },
-          status: :ok
+        render json: { 
+          message: 'The user has been deleted'
+        },
+        status: :ok
       else
-        render 
-          json: { 
-            message: 'The user could not be removed' 
-          },
-          status: :unprocessable_entity
+        render json: {
+          message: 'The user could not be removed'
+        },
+        status: :unprocessable_entity
       end
     else
-      render
-        json: { 
-          message: 'The user does not exist' 
-        },
-        status: :not_found
+      render json: { 
+        message: 'The user does not exist'
+      },
+      status: :not_found
     end
   end
 

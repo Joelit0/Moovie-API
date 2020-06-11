@@ -6,19 +6,18 @@ class AuthenticationController < ApplicationController
     @user = User.find_by_email(params[:email])
     if @user&.valid_password?(params[:password])
       token = JsonWebToken.encode(user_id: @user.id)
-      render 
-        json: { 
-          token: token,
-          exp: DateTime.current + 24.hours,
-          email: @user.email
-        },
-        status: :ok
+
+      render json: { 
+        token: token,
+        exp: DateTime.current + 24.hours,
+        email: @user.email
+      },
+      status: :ok
     else
-      render 
-        json: { 
-          error: 'unauthorized' 
-        }, 
-        status: :unauthorized
+      render json: { 
+        error: 'unauthorized'
+      },
+      status: :unauthorized
     end
   end
 
