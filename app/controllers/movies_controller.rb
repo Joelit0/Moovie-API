@@ -20,7 +20,11 @@ class MoviesController < ApplicationController
     if @movie
       render json: @movie, :include => [:videos], status: :ok
     else
-      render json: { message: 'The movie does not exist' }, status: :not_found
+      render 
+        json: { 
+          message: 'The movie does not exist' 
+        }, 
+        status: :not_found
     end
   end
 end
