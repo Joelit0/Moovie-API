@@ -109,9 +109,9 @@ RSpec.describe UsersController, type: :controller do
   describe "POST #Create" do
     before do 
       @created_user = { "status"=>"SUCCES", "message"=>"Created user", "data"=>{"id"=>307, "email"=>"joelito@gmail.com", "full_name"=>"Joelito Alayon"} }
-      @not_created_user = { "status"=>"ERROR", "message"=>"User not created"}
-      @taken_email = { "status"=>"ERROR", "message"=>"User not created", "data"=>{"email"=>["has already been taken", "has already been taken"]} }
-      @short_password = { "status"=>"ERROR", "message"=>"User not created", "data"=>{"password"=>["is too short (minimum is 6 characters)", "is too short (minimum is 6 characters)"]} }
+      @not_created_user = { "status"=>"ERROR", "message"=>"User not created" }
+      @taken_email = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "email"=>"has already been taken" } }
+      @short_password = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "password"=>"is too short (minimum is 6 characters)" } }
     end
     context "when valid" do
       it "The user has been created successfully" do
@@ -123,10 +123,10 @@ RSpec.describe UsersController, type: :controller do
         expect(@not_created_user['message']).to eq('User not created')
       end
       it "The user email has already been taken" do
-        expect(@taken_email['data']['email']).to eq(["has already been taken", "has already been taken"])
+        expect(@taken_email['data']['email']).to eq("has already been taken")
       end
       it "The user password is too short" do
-        expect(@short_password['data']['password']).to eq(["is too short (minimum is 6 characters)", "is too short (minimum is 6 characters)"])
+        expect(@short_password['data']['password']).to eq("is too short (minimum is 6 characters)")
       end
     end
   end
