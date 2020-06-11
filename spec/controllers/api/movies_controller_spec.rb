@@ -1,11 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe MoviesController, type: :controller do
+  before do 
+    @user = create(:user)
+    @token = JsonWebToken.encode(user_id: @user.id)
+  end
   describe "GET #index" do
     context "when valid" do 
       context "when all the movies are obtained correctly" do
         before do
           movie = create(:movie)
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index
           @json_response = JSON.parse(response.body)
         end
@@ -54,12 +59,14 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it 'sorting asc release_date' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {sort_by: 'release_date', sort_order: 'asc'}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_1.as_json, @movie_2.as_json])
         end
 
         it 'sorting desc release_date' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {sort_by: 'release_date', sort_order: 'desc'}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_2.as_json, @movie_1.as_json])
@@ -73,12 +80,14 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it 'sorting asc title' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {sort_by: 'title', sort_order: 'asc'}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_1.as_json, @movie_2.as_json])
         end
 
         it 'sorting desc title' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {sort_by: 'title', sort_order: 'desc'}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_2.as_json, @movie_1.as_json])
@@ -93,12 +102,14 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it 'the page 1 should contain a 20 movies' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {page: 1}
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 20
         end
 
         it 'the page 2 should contain a 1 movie' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {page: 2}
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 1
@@ -112,12 +123,14 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "should show a movie 1" do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {title: "The Lord of the Rings: The Fellowship of the Ring"}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_1.as_json])
         end
 
         it "should show a movie 2" do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {title: "The Lord of the Rings: The Two Towers"}
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_2.as_json])
@@ -125,45 +138,6 @@ RSpec.describe MoviesController, type: :controller do
       end
     end
     context "when invalid" do
-      context "when it returns the unexpected movie" do
-        before do
-          movie = create(:movie)
-          get :index
-          @json_response = JSON.parse(response.body)
-        end
-
-        it "JSON body response contains invalid movies attributes" do
-          expect(@json_response.first.keys).to_not match_array(["invalidKey","invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey"])
-        end
-        
-        it "response with JSON body containing unexpected movie title" do
-          expect(@json_response.first['title']).to_not eq('Invalid title')
-        end
-
-        it "response with JSON body containing unexpected movie tagline" do
-          expect(@json_response.first['tagline']).to_not eq('Invalid tagline')
-        end
-
-        it "response with JSON body containing unexpected movie overview" do
-          expect(@json_response.first['overview']).to_not eq('Invalid overview')
-        end
-        
-        it "response with JSON body containing unexpected movie release_date" do
-          expect(@json_response.first['release_date']).to_not eq('Invalid date')
-        end
-
-        it "response with JSON body containing unexpected movie poster_url" do
-          expect(@json_response.first['poster_url']).to_not eq('Invalid poster_url')
-        end
-
-        it "response with JSON body containing unexpected movie backdrop_url" do
-          expect(@json_response.first['backdrop_url']).to_not eq('Invalid backdrop_url')
-        end
-
-        it "response with JSON body containing unexpected movie imdb_id" do
-          expect(@json_response.first['imdb_id']).to_not eq('Invalid imdb_id')
-        end
-      end
       context "when movies are not paged correctly" do
         before do 
           21.times do 
@@ -172,12 +146,14 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it 'to make it false, the page 1 should contain a 21 movies' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {page: 1}
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 21
         end
 
         it 'to make it false, the page 2 should contain a 0 movie' do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {page: 2}
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 0
@@ -190,101 +166,111 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "to make it false, should show a movie 2" do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {title: "The Lord of the Rings: The Fellowship of the Ring"}
           json_body = JSON.parse(response.body)
           expect(json_body).to_not match([@movie_2.as_json])
         end
 
         it "to make it false, should show a movie 1" do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: {title: "The Lord of the Rings: The Two Towers"}
           json_body = JSON.parse(response.body)
           expect(json_body).to_not match([@movie_1.as_json])
+        end
+      end
+      context  "when the user does not authenticate" do
+        before do
+          get :index, format: :json
+          @json_response = JSON.parse(response.body)
+          @nil_token = { "errors"=>"Nil JSON web token" }
+        end
+        it "it returns an error if token is nil" do
+          expect(@json_response).to eq(@nil_token)
         end
       end
     end
   end
 
   describe "GET #show" do
-    before do
-      @movie1 = create(:movie)
-      get :show, params: { id: @movie1.id }
-      @json_response = JSON.parse(response.body)
-    end
     context "when valid" do
+      before do
+        @movie1 = create(:movie)
+        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        get :show, params: { id: @movie1.id }
+        @json_response = JSON.parse(response.body)
+      end
       context "when it returns the expected movie" do
         it "should return http succes" do
           expect(response).to have_http_status(:success)
         end
 
         it "JSON body response contains expected movie attributes and contains videos" do
-          expect(@json_response.first.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at", "videos"])
+          expect(@json_response.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at", "videos"])
         end
 
         it "response with JSON body containing expected movie title" do
-          expect(@json_response.first['title']).to eq('The Lord of the Rings: The Fellowship of the Ring')
+          expect(@json_response['title']).to eq('The Lord of the Rings: The Fellowship of the Ring')
         end
         
         it "response with JSON body containing expected movie tagline" do
-          expect(@json_response.first['tagline']).to eq('One ring to rule them all')
+          expect(@json_response['tagline']).to eq('One ring to rule them all')
         end
         
         it "response with JSON body containing expected movie overview" do
-          expect(@json_response.first['overview']).to eq('The future of civilization rests in the fate of the One Ring')
+          expect(@json_response['overview']).to eq('The future of civilization rests in the fate of the One Ring')
         end
         
         it "response with JSON body containing expected movie release_date" do
-          expect(@json_response.first['release_date']).to eq('2001-01-12')
+          expect(@json_response['release_date']).to eq('2001-01-12')
         end
         
         it "response with JSON body containing expected movie poster_url" do
-          expect(@json_response.first['poster_url']).to eq('https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg')
+          expect(@json_response['poster_url']).to eq('https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg')
         end
         
         it "response with JSON body containing expected movie backdrop_url" do
-          expect(@json_response.first['backdrop_url']).to eq('https://m.media-amazon.com/images')
+          expect(@json_response['backdrop_url']).to eq('https://m.media-amazon.com/images')
         end
       
         it "response with JSON body containing expected movie imdb_id" do
-          expect(@json_response.first['imdb_id']).to eq('3782')
+          expect(@json_response['imdb_id']).to eq('3782')
         end
 
         it "response with JSON body containing expected movie videos" do
-          expect(@json_response.first['videos']).to eq([])
+          expect(@json_response['videos']).to eq([])
         end
       end
     end
     context "when invalid" do
-      context "when it returns the unexpected movie" do
-        it "JSON body response contains invalid movie attributes" do
-          expect(@json_response.first.keys).to_not match_array(["invalidKey","invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey", "invalidKey"])
+      context  "when the user does not authenticate" do
+        before do
+          @movie1 = create(:movie)
+          get :show, params: { id: @movie1.id }
+          @json_response = JSON.parse(response.body)
+          @nil_token = { "errors"=>"Nil JSON web token" }
+        end
+        it "it returns an error if token is nil" do
+          expect(@json_response).to eq(@nil_token)
+        end
+      end
+      context "when the user does not exist" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          get :show, params: { id: "Invalid id" }
+          @json_response = JSON.parse(response.body)
         end
         
-        it "response with JSON body containing unexpected movie title" do
-          expect(@json_response.first['title']).to_not eq('Invalid title')
-        end
-
-        it "response with JSON body containing unexpected movie tagline" do
-          expect(@json_response.first['tagline']).to_not eq('Invalid tagline')
-        end
-
-        it "response with JSON body containing unexpected movie overview" do
-          expect(@json_response.first['overview']).to_not eq('Invalid overview')
+        it "returns http not found" do
+          expect(response).to have_http_status(:not_found)
         end
         
-        it "response with JSON body containing unexpected movie release_date" do
-          expect(@json_response.first['release_date']).to_not eq('Invalid date')
+        it "The user could not be displayed" do
+          expect(@json_response['status']).to eq('ERROR')
         end
-
-        it "response with JSON body containing unexpected movie poster_url" do
-          expect(@json_response.first['poster_url']).to_not eq('Invalid poster_url')
-        end
-
-        it "response with JSON body containing unexpected movie backdrop_url" do
-          expect(@json_response.first['backdrop_url']).to_not eq('Invalid backdrop_url')
-        end
-
-        it "response with JSON body containing unexpected movie imdb_id" do
-          expect(@json_response.first['imdb_id']).to_not eq('Invalid imdb_id')
+        
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq('The movie does not exist')
         end
       end
     end

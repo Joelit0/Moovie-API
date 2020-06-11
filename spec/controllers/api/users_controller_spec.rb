@@ -109,9 +109,9 @@ RSpec.describe UsersController, type: :controller do
   describe "POST #Create" do
     before do 
       @created_user = { "status"=>"SUCCES", "message"=>"Created user", "data"=>{"id"=>307, "email"=>"joelito@gmail.com", "full_name"=>"Joelito Alayon"} }
-      @not_created_user = { "status"=>"ERROR", "message"=>"User not created" }
+      @not_created_user = { "status"=>"ERROR", "message"=>"User not created"}
       @taken_email = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "email"=>"has already been taken" } }
-      @short_password = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "password"=>"is too short (minimum is 6 characters)" } }
+      @short_password = { "status"=>"ERROR", "message"=>"User not created", "data"=>{ "password"=>"is too short (minimum is 6 characters)"} }
     end
     context "when valid" do
       it "The user has been created successfully" do
