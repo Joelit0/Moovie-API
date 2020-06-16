@@ -4,4 +4,3 @@ class Movie < ApplicationRecord
   accepts_nested_attributes_for :videos
   validates_presence_of :title, :tagline, :overview, :release_date, :poster_url, :backdrop_url, :imdb_id
 end
-

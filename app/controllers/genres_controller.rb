@@ -1,4 +1,5 @@
 class GenresController < ApplicationController
+  before_action :authorize_request
   def index
     @genres = Genre.all
     

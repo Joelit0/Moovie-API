@@ -1,4 +1,6 @@
 class MoviesController < ApplicationController
+  before_action :authorize_request
+
   def index
     attribute = params["sort_by"] || :title
     order = params["sort_order"] || :asc
@@ -13,8 +15,15 @@ class MoviesController < ApplicationController
   end
 
   def show 
-    @movie = Movie.includes(:videos).where(id: params[:id])
+    @movie = Movie.includes(:videos).where(id: params[:id]).first
 
-    render json: @movie, :include => [:videos], status: :ok
+    if @movie
+      render json: @movie, :include => [:videos], status: :ok
+    else
+      render json: { 
+        message: 'The movie does not exist' 
+      },
+      status: :not_found
+    end
   end
 end
