@@ -8,6 +8,7 @@ class CreateMovies < ActiveRecord::Migration[6.0]
       t.string :poster_url
       t.string :backdrop_url
       t.string :imdb_id
+      t.references :list, index: true
 
       t.timestamps
     end

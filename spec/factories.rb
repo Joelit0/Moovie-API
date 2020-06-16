@@ -1,4 +1,10 @@
 FactoryBot.define do
+  factory :list do
+    name { "MyString" }
+    description { "MyString" }
+    public { false }
+  end
+
 
   factory :user do
     email { "test@gmail.com" }

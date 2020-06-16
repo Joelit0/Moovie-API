@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     @user = User.where(id: params[:id]).first
 
     if @user
-      render json: @user.as_json(except: %i[created_at updated_at]), status: :ok
+      render json: @user.as_json(except: %i[created_at updated_at], :include => [:lists]), status: :ok
     else
       render json: { 
         message: 'The user does not exist' 
