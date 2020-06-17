@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :genres
   resources :movies
   resources :users
+  resources :lists
   
   post '/auth/login', to: 'authentication#login'
   get '/*a', to: 'application#not_found'

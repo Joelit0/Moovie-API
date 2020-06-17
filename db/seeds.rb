@@ -5,12 +5,22 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+# USERS
+user1 = User.create({
+  email: "joelalayongarcia@gmail.com",
+  password: "12345678",
+  full_name: "Joel Alayon"
+})
+
+# GENRES
 Genre.create(name: 'Horror')
 Genre.create(name: 'Science fiction')
 Genre.create(name: 'Comedy')
 Genre.create(name: 'Romance')
 Genre.create(name: 'Adventure')
 
+# MOVIES
 movie1 = Movie.create({
   title: "The Lord of the Rings: The Fellowship of the Ring",
   tagline: "One ring to rule them all",
@@ -31,6 +41,21 @@ movie2 = Movie.create(
   imdb_id: "8393"
 }
 )
-video1 = Video.create(size: 178131, format: "Mp4", url: "www.fakeurl.com")
+video1 = Video.create({
+  size: 178131,
+  format: "Mp4",
+  url: "www.fakeurl.com"
+})
 
 movie2.update(videos: [video1])
+
+# LISTS
+list1 = List.create(
+  name: "Joel List",
+  description: "A movies list",
+  public: true
+)
+
+list1.update(user_id: [1])
+list1.update(movies: [movie1])
+user1.update(lists: [list1])
