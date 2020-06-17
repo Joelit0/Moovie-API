@@ -58,4 +58,14 @@ list1 = List.create(
 
 list1.update(user_id: [1])
 list1.update(movies: [movie1])
-user1.update(lists: [list1])
+
+list2 = List.create(
+  name: "Joel List 2",
+  description: "A movies list 2",
+  public: false
+)
+list2.update(user_id: [1])
+list2.update(movies: [movie2])
+
+# UPDATE USER1 LISTS
+user1.update(lists: [list1, list2])
