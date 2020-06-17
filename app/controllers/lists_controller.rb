@@ -1,4 +1,6 @@
 class ListsController < ApplicationController
+  before_action :authorize_request
+  
   def index
     @lists = List.all
       
