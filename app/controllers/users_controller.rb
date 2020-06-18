@@ -38,20 +38,62 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy 
-    @user = User.where(id: params[:id]).first
+  def update
+    @user = User.find_by(id: params[:id])
+    @token_content = JsonWebToken.decode(bearer_token)
+    @user_id = @token_content['user_id']
 
     if @user
-      if @user.destroy
-        render json: { 
-          message: 'The user has been deleted'
-        },
-        status: :ok
+      if @user.id == @user_id
+        if @user.update_attributes(user_params)
+          render json: { 
+            message: "Updated user",
+            data: @user 
+          },
+          status: :ok
+        else
+          render json: {
+            message: "User not updated"
+          },
+          status: :unprocessable_entity
+        end
       else
-        render json: {
-          message: 'The user could not be removed'
+        render json: { 
+          message: 'You dont can modify other users'
         },
-        status: :unprocessable_entity
+        status: :not_found
+      end
+    else
+      render json: { 
+        message: 'The user does not exist'
+      },
+      status: :not_found
+    end
+  end
+
+  def destroy 
+    @user = User.where(id: params[:id]).first
+    @token_content = JsonWebToken.decode(bearer_token)
+    @user_id = @token_content['user_id']
+
+    if @user
+      if @user.id == @user_id
+        if @user.destroy
+          render json: { 
+            message: 'The user has been deleted'
+          },
+          status: :ok
+        else
+          render json: {
+            message: 'The user could not be removed'
+          },
+          status: :unprocessable_entity
+        end
+      else
+        render json: { 
+          message: 'You dont can delete other users'
+        },
+        status: :not_found
       end
     else
       render json: { 
@@ -65,5 +107,11 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(:email, :password, :password_confirmation, :full_name)
+  end
+  
+  def bearer_token
+    pattern = /^Bearer /
+    header  = request.headers['Authorization']
+    header.gsub(pattern, '') if header && header.match(pattern)
   end
 end
