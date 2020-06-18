@@ -7,7 +7,7 @@ class ListsController < ApplicationController
     @user_id = @token_content['user_id']
 
     if @user
-      @lists = @user.lists.movies
+      @lists = @user.lists.as_json(:include => [:movies])
       if @user.id == @user_id
         render json: {
           lists: @lists
