@@ -9,9 +9,18 @@ class UsersController < ApplicationController
 
   def show
     @user = User.includes(:lists).where(id: params[:id]).first
+    @token_content = JsonWebToken.decode(bearer_token)
+    @user_id = @token_content['user_id']
 
     if @user
-      render json: @user.as_json(except: %i[created_at updated_at photo_path], :include => [:lists]), status: :ok
+      if @user.id == @user_id
+        render json: @user.as_json(except: %i[created_at updated_at photo_path], :include => [:lists]), status: :ok
+      else
+        render json: { 
+          message: 'You dont can see other users profile'
+        },
+        status: :not_found
+      end
     else
       render json: { 
         message: 'The user does not exist' 
