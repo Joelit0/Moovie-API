@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :list do
-    name { "MyString" }
-    description { "MyString" }
+    name { "Movies List" }
+    description { "My list" }
     public { false }
   end
 
