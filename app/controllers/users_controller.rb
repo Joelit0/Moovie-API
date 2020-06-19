@@ -1,12 +1,6 @@
 class UsersController < ApplicationController
   before_action :authorize_request, except: [:create]
 
-  def index
-    @users = User.all
-    
-    render json: @users.as_json(except: %i[created_at updated_at]), status: :ok
-  end
-
   def show
     @user = User.includes(:lists).where(id: params[:id]).first
     @token_content = JsonWebToken.decode(bearer_token)
