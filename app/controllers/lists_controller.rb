@@ -3,21 +3,16 @@ class ListsController < ApplicationController
   
   def show_users_lists
     @user = User.where(id: params[:id]).first
-    @token_content = JsonWebToken.decode(bearer_token)
-    @user_id = @token_content['user_id']
 
     if @user
       @lists = @user.lists.as_json(:include => [:movies])
-      if @user.id == @user_id
-        render json: {
-          lists: @lists
-        },
-        status: :ok
+      if @user.id == @current_user.id
+        render json: @lists, status: :ok
       else
         render json: { 
-          message: 'You dont can see other users lists'
+          message: "You can't see other users' lists"
         },
-        status: :not_found
+        status: :unauthorized
       end
     else
       render json: { 
@@ -25,13 +20,5 @@ class ListsController < ApplicationController
       },
       status: :not_found
     end
-  end
- 
-  private 
-
-  def bearer_token
-    pattern = /^Bearer /
-    header  = request.headers['Authorization']
-    header.gsub(pattern, '') if header && header.match(pattern)
   end
 end

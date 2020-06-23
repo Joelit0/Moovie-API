@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe UsersController, type: :controller do
   before do 
     @user = create(:user)
+    @user1 = create(:user)
     @token = JsonWebToken.encode(user_id: @user.id)
   end
 
@@ -23,7 +24,7 @@ RSpec.describe UsersController, type: :controller do
       end
       
       it "JSON body response contains expected user email" do
-        expect(@json_response['email']).to eq('test@gmail.com')
+        expect(@json_response['email']).to eq(@user.email)
       end
 
       it "JSON body response contains expected user full_name" do
@@ -63,6 +64,19 @@ RSpec.describe UsersController, type: :controller do
         
         it "The user does not exist" do
           expect(@json_response['message']).to eq('The user does not exist')
+        end
+      end
+      context "when the user's token does not match the user to display" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :show, format: :json, params: { id: @user1.id }
+          @json_response = JSON.parse(response.body)
+        end
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq("You dont can see other users profile")
         end
       end
     end
@@ -118,21 +132,35 @@ RSpec.describe UsersController, type: :controller do
         it "returns an error if token is nil" do
           expect(@json_response).to eq(@nil_token)
         end
+      end
         
-        context "when the user cannot be deleted" do
-          before do 
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :destroy, format: :json, params: { id: "False_id" }
-            @json_response = JSON.parse(response.body)
-          end
-          
-          it "returns http not found" do
-            expect(response).to have_http_status(:not_found)
-          end
-          
-          it "The user does not exist" do
-            expect(@json_response['message']).to eq('The user does not exist')
-          end
+      context "when the user cannot be deleted" do
+        before do 
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :destroy, format: :json, params: { id: "False_id" }
+          @json_response = JSON.parse(response.body)
+        end
+        
+        it "returns http not found" do
+          expect(response).to have_http_status(:not_found)
+        end
+        
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq('The user does not exist')
+        end
+      end
+
+      context "when the user's token does not match the user to display" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :destroy, format: :json, params: { id: @user1.id }
+          @json_response = JSON.parse(response.body)
+        end
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq("You dont can delete other users")
         end
       end
     end

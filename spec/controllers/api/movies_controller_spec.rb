@@ -5,6 +5,7 @@ RSpec.describe MoviesController, type: :controller do
     @user = create(:user)
     @token = JsonWebToken.encode(user_id: @user.id)
   end
+  
   describe "GET #index" do
     context "when valid" do 
       before do

@@ -2,12 +2,12 @@ FactoryBot.define do
   factory :list do
     name { "Movies List" }
     description { "My list" }
-    public { false }
+    public { true }
+    user
   end
 
-
   factory :user do
-    email { "test@gmail.com" }
+    sequence(:email) { |n| "test#{n}@gmail.com" }
     password { "12345678" }
     full_name { "Joel Alayon" }
     photo_path { "www.url.com" }

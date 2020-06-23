@@ -3,17 +3,15 @@ class UsersController < ApplicationController
 
   def show
     @user = User.includes(:lists).where(id: params[:id]).first
-    @token_content = JsonWebToken.decode(bearer_token)
-    @user_id = @token_content['user_id']
 
     if @user
-      if @user.id == @user_id
+      if @user.id == @current_user.id
         render json: @user.as_json(except: %i[created_at updated_at photo_path], :include => [:lists]), status: :ok
       else
         render json: { 
           message: 'You dont can see other users profile'
         },
-        status: :not_found
+        status: :unauthorized
       end
     else
       render json: { 
@@ -43,11 +41,9 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find_by(id: params[:id])
-    @token_content = JsonWebToken.decode(bearer_token)
-    @user_id = @token_content['user_id']
 
     if @user
-      if @user.id == @user_id
+      if @user.id == @current_user.id
         if @user.update_attributes(user_params)
           render json: { 
             message: "Updated user",
@@ -64,7 +60,7 @@ class UsersController < ApplicationController
         render json: { 
           message: 'You dont can modify other users'
         },
-        status: :not_found
+        status: :unauthorized
       end
     else
       render json: { 
@@ -76,11 +72,9 @@ class UsersController < ApplicationController
 
   def destroy 
     @user = User.where(id: params[:id]).first
-    @token_content = JsonWebToken.decode(bearer_token)
-    @user_id = @token_content['user_id']
 
     if @user
-      if @user.id == @user_id
+      if @user.id == @current_user.id
         if @user.destroy
           render json: { 
             message: 'The user has been deleted'
@@ -96,7 +90,7 @@ class UsersController < ApplicationController
         render json: { 
           message: 'You dont can delete other users'
         },
-        status: :not_found
+        status: :unauthorized
       end
     else
       render json: { 
@@ -110,11 +104,5 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(:email, :password, :password_confirmation, :full_name)
-  end
-  
-  def bearer_token
-    pattern = /^Bearer /
-    header  = request.headers['Authorization']
-    header.gsub(pattern, '') if header && header.match(pattern)
   end
 end

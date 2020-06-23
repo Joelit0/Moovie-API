@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   resources :movies
   resources :users
   
-  get '/lists/:id', to: 'lists#show'
   get '/users/:id/lists', to:'lists#show_users_lists'
   post '/auth/login', to: 'authentication#login'
   get '/*a', to: 'application#not_found'
