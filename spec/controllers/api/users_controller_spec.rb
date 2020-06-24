@@ -80,9 +80,11 @@ RSpec.describe UsersController, type: :controller do
           delete :show, format: :json, params: { id: @user1.id }
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http unauthorized" do
           expect(response).to have_http_status(:unauthorized)
         end
+
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot see other users profile")
         end
@@ -96,18 +98,22 @@ RSpec.describe UsersController, type: :controller do
       @taken_email = { "message" => "User not created", "data" => { "email" => "has already been taken" } }
       @short_password = { "message" => "User not created", "data" => { "password" => "is too short (minimum is 6 characters)" } }
     end
+    
     context "when valid" do
       it "The user has been created successfully" do
         expect(@created_user['message']).to eq('Created user')
       end
     end
+
     context "when invalid" do
       it "The user has not been created successfully" do
         expect(@not_created_user['message']).to eq('User not created')
       end
+
       it "The user email has already been taken" do
         expect(@taken_email['data']['email']).to eq("has already been taken")
       end
+
       it "The user password is too short" do
         expect(@short_password['data']['password']).to eq("is too short (minimum is 6 characters)")
       end
@@ -125,6 +131,7 @@ RSpec.describe UsersController, type: :controller do
         expect(@json_response['message']).to eq('The user has been deleted')
       end
     end
+
     context "when invalid" do
       context "when the user does not authenticate" do
         before do 
@@ -164,9 +171,11 @@ RSpec.describe UsersController, type: :controller do
           delete :destroy, format: :json, params: { id: @user1.id }
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http unauthorized" do
           expect(response).to have_http_status(:unauthorized)
         end
+        
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot delete other users")
         end
