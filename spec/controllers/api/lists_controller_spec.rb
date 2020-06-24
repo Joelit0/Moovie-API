@@ -86,7 +86,7 @@ RSpec.describe ListsController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
       it "The user does not exist" do
-        expect(@json_response['message']).to eq("You can't see other users' lists")
+        expect(@json_response['message']).to eq("You cannot see other users' lists")
       end
     end
   end

@@ -84,7 +84,7 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to have_http_status(:unauthorized)
         end
         it "The user does not exist" do
-          expect(@json_response['message']).to eq("You dont can see other users profile")
+          expect(@json_response['message']).to eq("You cannot see other users profile")
         end
       end
     end
@@ -168,7 +168,7 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to have_http_status(:unauthorized)
         end
         it "The user does not exist" do
-          expect(@json_response['message']).to eq("You dont can delete other users")
+          expect(@json_response['message']).to eq("You cannot delete other users")
         end
       end
     end

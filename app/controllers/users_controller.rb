@@ -9,7 +9,7 @@ class UsersController < ApplicationController
         render json: @current_user.as_json(except: %i[created_at updated_at], :include => [:lists]), status: :ok
       else
         render json: { 
-          message: 'You dont can see other users profile'
+          message: 'You cannot see other users profile'
         },
         status: :unauthorized
       end
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
         end
       else
         render json: { 
-          message: 'You dont can modify other users'
+          message: 'You cannot modify other users'
         },
         status: :unauthorized
       end
@@ -88,7 +88,7 @@ class UsersController < ApplicationController
         end
       else
         render json: { 
-          message: 'You dont can delete other users'
+          message: 'You cannot delete other users'
         },
         status: :unauthorized
       end

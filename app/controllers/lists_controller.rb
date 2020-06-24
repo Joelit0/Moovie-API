@@ -10,7 +10,7 @@ class ListsController < ApplicationController
         render json: @lists, status: :ok
       else
         render json: { 
-          message: "You can't see other users' lists"
+          message: "You cannot see other users' lists"
         },
         status: :unauthorized
       end
