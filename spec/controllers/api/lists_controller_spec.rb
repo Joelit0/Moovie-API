@@ -25,11 +25,11 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "JSON body response contains expected list name" do
-        expect(@json_response.first['name']).to eq('Movies List')
+        expect(@json_response.first['name']).to eq(@list.name)
       end
       
       it "JSON body response contains expected list description" do
-        expect(@json_response.first['description']).to eq('My list')
+        expect(@json_response.first['description']).to eq(@list.description)
       end
 
       it "JSON body response contains expected list id" do
@@ -37,7 +37,7 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "JSON body response contains expected list state" do
-        expect(@json_response.first['public']).to eq(true)
+        expect(@json_response.first['public']).to eq(@list.public)
       end
 
       it "JSON body response contains user id of expected list" do
