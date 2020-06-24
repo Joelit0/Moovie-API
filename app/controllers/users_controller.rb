@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
     if @user
       if @user.id == @current_user.id
-        render json: @user.as_json(except: %i[created_at updated_at photo_path], :include => [:lists]), status: :ok
+        render json: @current_user.as_json(except: %i[created_at updated_at], :include => [:lists]), status: :ok
       else
         render json: { 
           message: 'You dont can see other users profile'
@@ -27,7 +27,7 @@ class UsersController < ApplicationController
     if @user.save
       render json: { 
         message: 'Created user',
-        data: @user.as_json(except: %i[created_at updated_at photo_path])
+        data: @user.as_json(except: %i[created_at updated_at])
       }, 
       status: :created
     else
@@ -44,7 +44,7 @@ class UsersController < ApplicationController
 
     if @user
       if @user.id == @current_user.id
-        if @user.update_attributes(user_params)
+        if @current_user.update_attributes(user_params)
           render json: { 
             message: "Updated user",
             data: @user 
@@ -103,6 +103,6 @@ class UsersController < ApplicationController
   private 
 
   def user_params
-    params.permit(:email, :password, :password_confirmation, :full_name)
+    params.permit(:email, :password, :password_confirmation, :full_name, :photo_path)
   end
 end

@@ -1,11 +1,11 @@
 class ListsController < ApplicationController
   before_action :authorize_request
   
-  def show_users_lists
+  def index
     @user = User.where(id: params[:id]).first
+    @lists = @current_user.lists
 
     if @user
-      @lists = @user.lists.as_json(:include => [:movies])
       if @user.id == @current_user.id
         render json: @lists, status: :ok
       else
