@@ -4,7 +4,7 @@ RSpec.describe ListsController, type: :controller do
   before do
     @user = create(:user)
     @user1 = create(:user)
-    @list = create(:list, user_id: @user.id)8
+    @list = create(:list, user_id: @user.id)
     @token = JsonWebToken.encode(user_id: @user.id)
   end
   

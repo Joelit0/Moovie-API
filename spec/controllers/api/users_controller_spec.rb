@@ -20,7 +20,7 @@ RSpec.describe UsersController, type: :controller do
       end
       
       it "JSON body response contains expected user attributes" do
-        expect(@json_response.keys).to match_array(["id", "email", "full_name","lists"])
+        expect(@json_response.keys).to match_array(["id", "email", "full_name", "lists", "photo_path"])
       end
       
       it "JSON body response contains expected user email" do
