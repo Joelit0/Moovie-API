@@ -2,7 +2,7 @@ class ListsController < ApplicationController
   before_action :authorize_request
   
   def index
-    @user = User.where(id: params[:id]).first
+    @user = User.find_by(id: params[:id])
     @lists = @current_user.lists
 
     if @user

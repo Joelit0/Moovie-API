@@ -10,7 +10,7 @@ RSpec.describe List, type: :model do
                           description: "My list",
                           public: true,
                           user_id: @user.id)}
-                          
+
   context "when valid" do
     it "is valid with valid attributes" do
       expect(subject).to be_valid

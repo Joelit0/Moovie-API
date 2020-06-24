@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_action :authorize_request, except: [:create]
 
   def show
-    @user = User.includes(:lists).where(id: params[:id]).first
+    @user = User.includes(:lists).find_by(id: params[:id])
 
     if @user
       if @user.id == @current_user.id
@@ -71,7 +71,7 @@ class UsersController < ApplicationController
   end
 
   def destroy 
-    @user = User.where(id: params[:id]).first
+    @user = User.find_by(id: params[:id])
 
     if @user
       if @user.id == @current_user.id
