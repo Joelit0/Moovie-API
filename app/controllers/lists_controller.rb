@@ -42,6 +42,25 @@ class ListsController < ApplicationController
     end
   end
 
+  def create 
+    @list = List.new(list_params)
+    @list.user_id = @current_user.id
+    
+    if @list.save
+      render json: { 
+        message: 'Created List',
+        data: @list
+      }, 
+      status: :created
+    else
+      render json: { 
+        message: 'User not created',
+        data: @list.errors
+      },
+      status: :unprocessable_entity
+    end
+  end
+
   def destroy 
     @list = List.find_by(id: params[:id])
 
