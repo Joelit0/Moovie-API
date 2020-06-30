@@ -20,7 +20,7 @@ RSpec.describe UsersController, type: :controller do
       end
       
       it "JSON body response contains expected user attributes" do
-        expect(@json_response.keys).to match_array(["id", "email", "full_name", "lists", "photo_path"])
+        expect(@json_response.keys).to match_array(["id", "email", "full_name", "photo_path"])
       end
       
       it "JSON body response contains expected user id" do
@@ -37,10 +37,6 @@ RSpec.describe UsersController, type: :controller do
 
       it "JSON body response contains expected user photo_path" do
         expect(@json_response['photo_path']).to eq(@user.photo_path)
-      end
-      
-      it "JSON body response contains expected user full_name" do
-        expect(@json_response['lists']).to eq([])
       end
     end
     context "when invalid" do
