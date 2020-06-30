@@ -61,6 +61,37 @@ class ListsController < ApplicationController
     end
   end
 
+  def update
+    @list = List.find_by(id: params[:id])
+
+    if @list
+      if @list.user_id == @current_user.id
+        if @list.update_attributes(list_params)
+          render json: { 
+            message: 'Updated list',
+            data: @list
+          },
+          status: :created
+        else
+          render json: {
+            message: 'The list could not be updated'
+          },
+          status: :unprocessable_entity
+        end
+      else
+        render json: { 
+          message: 'You cannot update other users lists'
+        },
+        status: :unauthorized
+      end
+    else
+      render json: { 
+        message: 'The list does not exist'
+      },
+      status: :not_found
+    end
+  end
+
   def destroy 
     @list = List.find_by(id: params[:id])
 
