@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   
   get '/users/:id/lists', to:'lists#index'
   get '/lists/:id', to:'lists#show'
+  delete '/lists/:id', to:'lists#destroy'
   post '/auth/login', to: 'authentication#login'
   get '/*a', to: 'application#not_found'
 end
