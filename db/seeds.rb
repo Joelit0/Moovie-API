@@ -54,22 +54,20 @@ list1 = List.create(
   name: "Joel List",
   description: "A movies list",
   public: true,
-  user_id: user1.id
+  user_id: user1.id,
+  movies: [movie1, movie2]
 )
 
 list2 = List.create(
   name: "Joel List 2",
   description: "A movies list 2",
-  public: false,
+  public: true,
   user_id: user1.id
 )
 
-# UPDATE USER1 LISTS
-# user1.update(lists: [list1, list2])
-
-#UPDATE LISTS
-# list1.update(user_id: [1])
-# list1.update(movies: [movie1])
-
-# list2.update(user_id: [1])
-# list2.update(movies: [movie2])
+list3 = List.create(
+  name: "Joel List 3",
+  description: "A movies list 3",
+  public: false,
+  user_id: user1.id
+)
