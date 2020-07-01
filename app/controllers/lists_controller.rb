@@ -71,7 +71,7 @@ class ListsController < ApplicationController
             message: 'Updated list',
             data: @list
           },
-          status: :created
+          status: :no_content
         else
           render json: {
             message: 'The list could not be updated'

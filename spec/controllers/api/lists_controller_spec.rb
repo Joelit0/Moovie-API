@@ -210,4 +210,70 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+  describe "PUT #update" do
+    context "when valid" do
+      before do
+        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        get :update, format: :json, params: { id: @list.id, name: "New name" }
+        @json_response = JSON.parse(response.body)
+      end
+
+      it "returns http no content" do
+        puts @json_response
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "The list has been updated successfully" do
+        expect(@json_response['message']).to eq('Updated list')
+      end
+    end
+
+    context "when invalid" do
+      context "when the user does not authenticate" do
+        before do
+          get :update, format: :json, params: { id: @list.id, name: "New name" }
+          @json_response = JSON.parse(response.body)
+          @nil_token = { "errors" => "Nil JSON web token" }
+        end
+  
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns an error if token is nil" do
+          expect(@json_response).to eq(@nil_token)
+        end
+      end
+      
+      context "when the list does not exist" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          get :update, format: :json, params: { id: "False id", name: "New name" }
+          @json_response = JSON.parse(response.body)
+        end
+        
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:not_found)
+        end
+  
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq('The list does not exist')
+        end
+      end
+      
+      context "when the user's token does not match the user to display" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          get :update, format: :json, params: { id: @list1.id, name: "New name" }
+          @json_response = JSON.parse(response.body)
+        end
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq("You cannot update other users lists")
+        end
+      end
+    end
+  end
 end

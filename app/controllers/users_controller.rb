@@ -49,7 +49,7 @@ class UsersController < ApplicationController
             message: "Updated user",
             data: @user 
           },
-          status: :ok
+          status: :no_content
         else
           render json: {
             message: "User not updated"
