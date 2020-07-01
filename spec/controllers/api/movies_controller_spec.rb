@@ -5,6 +5,7 @@ RSpec.describe MoviesController, type: :controller do
     @user = create(:user)
     @token = JsonWebToken.encode(user_id: @user.id)
   end
+  
   describe "GET #index" do
     context "when valid" do 
       before do
@@ -12,7 +13,7 @@ RSpec.describe MoviesController, type: :controller do
       end
       context "when all the movies are obtained correctly" do
         before do
-          movie = create(:movie)
+          @movie = create(:movie)
           get :index
           @json_response = JSON.parse(response.body)
         end
@@ -25,32 +26,36 @@ RSpec.describe MoviesController, type: :controller do
           expect(@json_response.first.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at"])
         end
         
+        it "JSON body response contains expected movie id" do
+          expect(@json_response.first['id']).to eq(@movie.id)
+        end
+
         it "JSON body response contains expected movie title" do
-          expect(@json_response.first['title']).to eq('The Lord of the Rings: The Fellowship of the Ring')
+          expect(@json_response.first['title']).to eq(@movie.title)
         end
 
         it "JSON body response contains expected movie tagline" do
-          expect(@json_response.first['tagline']).to eq('One ring to rule them all')
+          expect(@json_response.first['tagline']).to eq(@movie.tagline)
         end
 
         it "JSON body response contains expected movie overview" do
-          expect(@json_response.first['overview']).to eq('The future of civilization rests in the fate of the One Ring')
+          expect(@json_response.first['overview']).to eq(@movie.overview)
         end
         
         it "JSON body response contains expected movie release_date" do
-          expect(@json_response.first['release_date']).to eq('2001-01-12')
+          expect(@json_response.first['release_date']).to eq(@movie.release_date.to_s)
         end
 
         it "JSON body response contains expected movie poster_url" do
-          expect(@json_response.first['poster_url']).to eq('https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg')
+          expect(@json_response.first['poster_url']).to eq(@movie.poster_url)
         end
 
         it "JSON body response contains expected movie backdrop_url" do
-          expect(@json_response.first['backdrop_url']).to eq('https://m.media-amazon.com/images')
+          expect(@json_response.first['backdrop_url']).to eq(@movie.backdrop_url)
         end
 
         it "JSON body response contains expected movie imdb_id" do
-          expect(@json_response.first['imdb_id']).to eq('3782')
+          expect(@json_response.first['imdb_id']).to eq(@movie.imdb_id)
         end
       end
       
@@ -203,36 +208,36 @@ RSpec.describe MoviesController, type: :controller do
           expect(response).to have_http_status(:success)
         end
 
-        it "JSON body response contains expected movie attributes and contains videos" do
+        it "JSON body response contains expected movies attributes" do
           expect(@json_response.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at", "videos"])
         end
-
+        
         it "JSON body response contains expected movie title" do
-          expect(@json_response['title']).to eq('The Lord of the Rings: The Fellowship of the Ring')
+          expect(@json_response['title']).to eq(@movie1.title)
         end
-        
+
         it "JSON body response contains expected movie tagline" do
-          expect(@json_response['tagline']).to eq('One ring to rule them all')
+          expect(@json_response['tagline']).to eq(@movie1.tagline)
         end
-        
+
         it "JSON body response contains expected movie overview" do
-          expect(@json_response['overview']).to eq('The future of civilization rests in the fate of the One Ring')
+          expect(@json_response['overview']).to eq(@movie1.overview)
         end
         
         it "JSON body response contains expected movie release_date" do
-          expect(@json_response['release_date']).to eq('2001-01-12')
+          expect(@json_response['release_date']).to eq(@movie1.release_date.to_s)
         end
-        
+
         it "JSON body response contains expected movie poster_url" do
-          expect(@json_response['poster_url']).to eq('https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg')
+          expect(@json_response['poster_url']).to eq(@movie1.poster_url)
         end
-        
+
         it "JSON body response contains expected movie backdrop_url" do
-          expect(@json_response['backdrop_url']).to eq('https://m.media-amazon.com/images')
+          expect(@json_response['backdrop_url']).to eq(@movie1.backdrop_url)
         end
-      
+
         it "JSON body response contains expected movie imdb_id" do
-          expect(@json_response['imdb_id']).to eq('3782')
+          expect(@json_response['imdb_id']).to eq(@movie1.imdb_id)
         end
 
         it "JSON body response contains expected movie videos" do

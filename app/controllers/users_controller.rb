@@ -1,17 +1,18 @@
 class UsersController < ApplicationController
   before_action :authorize_request, except: [:create]
 
-  def index
-    @users = User.all
-    
-    render json: @users.as_json(except: %i[created_at updated_at]), status: :ok
-  end
-
   def show
-    @user = User.where(id: params[:id]).first
+    @user = User.includes(:lists).find_by(id: params[:id])
 
     if @user
-      render json: @user.as_json(except: %i[created_at updated_at]), status: :ok
+      if @user.id == @current_user.id
+        render json: @current_user.as_json(except: %i[created_at updated_at], :include => [:lists]), status: :ok
+      else
+        render json: { 
+          message: 'You cannot see other users profile'
+        },
+        status: :unauthorized
+      end
     else
       render json: { 
         message: 'The user does not exist' 
@@ -26,7 +27,7 @@ class UsersController < ApplicationController
     if @user.save
       render json: { 
         message: 'Created user',
-        data: @user.as_json(except: %i[created_at updated_at photo_path])
+        data: @user.as_json(except: %i[created_at updated_at])
       }, 
       status: :created
     else
@@ -38,20 +39,58 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy 
-    @user = User.where(id: params[:id]).first
+  def update
+    @user = User.find_by(id: params[:id])
 
     if @user
-      if @user.destroy
-        render json: { 
-          message: 'The user has been deleted'
-        },
-        status: :ok
+      if @user.id == @current_user.id
+        if @current_user.update_attributes(user_params)
+          render json: { 
+            message: "Updated user",
+            data: @user 
+          },
+          status: :ok
+        else
+          render json: {
+            message: "User not updated"
+          },
+          status: :unprocessable_entity
+        end
       else
-        render json: {
-          message: 'The user could not be removed'
+        render json: { 
+          message: 'You cannot modify other users'
         },
-        status: :unprocessable_entity
+        status: :unauthorized
+      end
+    else
+      render json: { 
+        message: 'The user does not exist'
+      },
+      status: :not_found
+    end
+  end
+
+  def destroy 
+    @user = User.find_by(id: params[:id])
+
+    if @user
+      if @user.id == @current_user.id
+        if @user.destroy
+          render json: { 
+            message: 'The user has been deleted'
+          },
+          status: :ok
+        else
+          render json: {
+            message: 'The user could not be removed'
+          },
+          status: :unprocessable_entity
+        end
+      else
+        render json: { 
+          message: 'You cannot delete other users'
+        },
+        status: :unauthorized
       end
     else
       render json: { 
@@ -64,6 +103,6 @@ class UsersController < ApplicationController
   private 
 
   def user_params
-    params.permit(:email, :password, :password_confirmation, :full_name)
+    params.permit(:email, :password, :password_confirmation, :full_name, :photo_path)
   end
 end

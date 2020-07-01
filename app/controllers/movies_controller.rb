@@ -15,7 +15,7 @@ class MoviesController < ApplicationController
   end
 
   def show 
-    @movie = Movie.includes(:videos).where(id: params[:id]).first
+    @movie = Movie.includes(:videos).find_by(id: params[:id])
 
     if @movie
       render json: @movie, :include => [:videos], status: :ok
