@@ -219,7 +219,6 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "returns http no content" do
-        puts @json_response
         expect(response).to have_http_status(:no_content)
       end
 
@@ -272,6 +271,68 @@ RSpec.describe ListsController, type: :controller do
         end
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot update other users lists")
+        end
+      end
+    end
+  end
+  describe 'DELETE #destroy' do
+    context "when valid" do
+      before do 
+        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        delete :destroy, format: :json, params: { id: @list.id }
+        @json_response = JSON.parse(response.body)
+      end
+
+      it "The user has been deleted successfully" do
+        expect(@json_response['message']).to eq('The list has been deleted')
+      end
+    end
+    context "when invalid" do
+      context "when the user does not authenticate" do
+        before do 
+          delete :destroy, format: :json, params: { id: @list.id }
+          @json_response = JSON.parse(response.body)
+          @nil_token = { "errors" => "Nil JSON web token" }
+        end
+
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns an error if token is nil" do
+          expect(@json_response).to eq(@nil_token)
+        end
+      end
+      
+      context "when the list cannot be deleted" do
+        before do 
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :destroy, format: :json, params: { id: "False_id" }
+          @json_response = JSON.parse(response.body)
+        end
+        
+        it "returns http not found" do
+          expect(response).to have_http_status(:not_found)
+        end
+        
+        it "The list does not exist" do
+          expect(@json_response['message']).to eq('The list does not exist')
+        end
+      end
+      
+      context "when the user's token does not match the user to display" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :destroy, format: :json, params: { id: @list1.id }
+          @json_response = JSON.parse(response.body)
+        end
+
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq("You cannot delete other users lists")
         end
       end
     end
