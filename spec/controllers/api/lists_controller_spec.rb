@@ -176,4 +176,38 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+  describe "POST #create" do
+    before do
+      @created_list = { "message" => "Created List", "data" => { "id" => 9, "name" => "Create list", "description" => "This is my list", "public" => false, "user_id" => 1, "created_at" => "2020-07-01T22:01:58.137Z", "updated_at" => "2020-07-01T22:01:58.137Z" }}
+      @description_blank = { "message" => "List not created", "data" => { "description" => ["can't be blank"] }}
+      @name_blank = { "message" => "List not created", "data" => { "name" => ["can't be blank"] }}
+      @public_blank = { "message" => "List not created", "data" => { "public" => ["is not included in the list","is reserved"] }}
+    end
+
+    context "when valid" do
+      it "The list has been created successfully" do
+        expect(@created_list['message']).to eq('Created List')
+      end
+    end
+
+    context "when invalid" do
+      it "The list has not been created successfully" do
+        expect(@description_blank['message']).to eq('List not created')
+      end
+      
+      context "when blank fields" do
+        it "The list can't be blank" do
+          expect(@description_blank['data']['description']).to eq(["can't be blank"])
+        end
+
+        it "The list name can't be blank" do
+          expect(@name_blank['data']['name']).to eq(["can't be blank"])
+        end
+        
+        it "The list state can't be blank" do
+          expect(@public_blank['data']['public']).to eq(["is not included in the list","is reserved"])
+        end
+      end
+    end
+  end
 end

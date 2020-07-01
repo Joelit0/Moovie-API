@@ -54,7 +54,7 @@ class ListsController < ApplicationController
       status: :created
     else
       render json: { 
-        message: 'User not created',
+        message: 'List not created',
         data: @list.errors
       },
       status: :unprocessable_entity
