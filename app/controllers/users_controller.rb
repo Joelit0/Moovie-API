@@ -44,7 +44,7 @@ class UsersController < ApplicationController
 
     if @user
       if @user.id == @current_user.id
-        if @current_user.update_attributes(user_params)
+        if @user.update_attributes(user_params)
           render json: { 
             message: "Updated user",
             data: @user 

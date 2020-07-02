@@ -119,6 +119,77 @@ RSpec.describe UsersController, type: :controller do
       end
     end
   end
+  describe "PUT #update" do
+    context "when valid" do
+      before do
+        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        @full_name = "New full_name"
+        put :update, format: :json, params: { id: @user.id, full_name: @full_name }
+        @json_response = JSON.parse(response.body)
+      end
+
+      it "returns http no content" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "The user has been updated successfully" do
+        expect(@json_response['message']).to eq('Updated user')
+      end
+
+      it "JSON body response contains expected user full_name" do
+        expect(@json_response['data']['full_name']).to eq(@full_name)
+      end
+    end
+
+    context "when invalid" do
+      context "when the user does not authenticate" do
+        before do
+          put :update, format: :json, params: { id: @user.id }
+          @json_response = JSON.parse(response.body)
+          @nil_token = { "errors" => "Nil JSON web token" }
+        end
+  
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns an error if token is nil" do
+          expect(@json_response).to eq(@nil_token)
+        end
+      end
+      
+      context "when the user does not exist" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          put :update, format: :json, params: { id: "False id"}
+          @json_response = JSON.parse(response.body)
+        end
+        
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:not_found)
+        end
+  
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq('The user does not exist')
+        end
+      end
+      
+      context "when the user's token does not match the user to display" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          get :update, format: :json, params: { id: @user1.id}
+          @json_response = JSON.parse(response.body)
+        end
+        it "returns http unauthorized" do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        it "The user does not exist" do
+          expect(@json_response['message']).to eq("You cannot modify other users")
+        end
+      end
+    end
+  end
+  
   describe "DELETE #destroy" do
     context "when valid" do
       before do 
