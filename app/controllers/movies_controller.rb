@@ -27,7 +27,7 @@ class MoviesController < ApplicationController
     end
   end
   
-  def add_movie_to_a_list
+  def add_movie
     @movie = Movie.find_by(id: params[:movie_id])
     @list = List.find_by(id: params[:list_id])
 
@@ -72,7 +72,7 @@ class MoviesController < ApplicationController
     end
   end
 
-  def remove_movie_from_a_list
+  def remove_movie
     @movie = Movie.find_by(id: params[:movie_id])
     @list = List.find_by(id: params[:list_id])
 

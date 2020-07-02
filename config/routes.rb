@@ -5,14 +5,14 @@ Rails.application.routes.draw do
   
   get '/movies', to: "movies#index"
   get '/movies/:id', to: "movies#show"
-  put '/movies/:movie_id/lists/:list_id', to:'movies#add_movie_to_a_list'
-  delete '/movies/:movie_id/lists/:list_id', to:'movies#remove_movie_from_a_list'
 
   get '/users/:id/lists', to:'lists#index'
   get '/lists/:id', to:'lists#show'
   post '/lists', to:'lists#create'
   put '/lists/:id', to:'lists#update'
   delete '/lists/:id', to:'lists#destroy'
+  put '/movies/:movie_id/lists/:list_id', to:'movies#add_movie'
+  delete '/movies/:movie_id/lists/:list_id', to:'movies#remove_movie'
 
   post '/auth/login', to: 'authentication#login'
   get '/*a', to: 'application#not_found'

@@ -293,7 +293,7 @@ RSpec.describe MoviesController, type: :controller do
       context "when valid" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+          put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
           @json_response = JSON.parse(response.body)
         end
         it "returns http no content" do
@@ -307,7 +307,7 @@ RSpec.describe MoviesController, type: :controller do
       context "when invalid" do
         context "when the user does not authenticate" do
           before do
-            put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
@@ -324,7 +324,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the list does not exist" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_movie_to_a_list, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
+            put :add_movie, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
             @json_response = JSON.parse(response.body)
           end
           
@@ -340,7 +340,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the movie does not exist" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_movie_to_a_list, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
+            put :add_movie, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
             @json_response = JSON.parse(response.body)
           end
           
@@ -356,7 +356,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the user's token does not match the user to display" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
+            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
             @json_response = JSON.parse(response.body)
           end
           it "returns http unauthorized" do
@@ -371,7 +371,7 @@ RSpec.describe MoviesController, type: :controller do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             @list = create(:list, user_id: @user.id, movies: [@movie])
-            put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
           end
           it "returns http unauthorized" do
@@ -389,7 +389,7 @@ RSpec.describe MoviesController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           @list = create(:list, user_id: @user.id, movies: [@movie])
-          delete :remove_movie_from_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+          delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
           @json_response = JSON.parse(response.body)
         end
         it "returns http no content" do
@@ -403,7 +403,7 @@ RSpec.describe MoviesController, type: :controller do
       context "when invalid" do
         context "when the user does not authenticate" do
           before do
-            delete :remove_movie_from_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
@@ -420,7 +420,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the movie does not exist" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie_from_a_list, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
+            delete :remove_movie, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
             @json_response = JSON.parse(response.body)
           end
           
@@ -436,7 +436,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the list does not exist" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie_from_a_list, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
+            delete :remove_movie, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
             @json_response = JSON.parse(response.body)
           end
           
@@ -452,7 +452,7 @@ RSpec.describe MoviesController, type: :controller do
         context "when the user's token does not match the user to display" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie_from_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
+            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
             @json_response = JSON.parse(response.body)
           end
           it "returns http unauthorized" do
@@ -467,7 +467,7 @@ RSpec.describe MoviesController, type: :controller do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             @list = create(:list, user_id: @user.id)
-            delete :remove_movie_from_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
           end
           it "returns http unauthorized" do

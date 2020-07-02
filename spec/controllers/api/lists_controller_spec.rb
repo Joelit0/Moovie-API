@@ -178,10 +178,39 @@ RSpec.describe ListsController, type: :controller do
   end
   describe "POST #create" do
     before do
-      @created_list = { "message" => "Created List", "data" => { "id" => 9, "name" => "Create list", "description" => "This is my list", "public" => false, "user_id" => 1, "created_at" => "2020-07-01T22:01:58.137Z", "updated_at" => "2020-07-01T22:01:58.137Z" }}
-      @description_blank = { "message" => "List not created", "data" => { "description" => ["can't be blank"] }}
-      @name_blank = { "message" => "List not created", "data" => { "name" => ["can't be blank"] }}
-      @public_blank = { "message" => "List not created", "data" => { "public" => ["is not included in the list","is reserved"] }}
+      @created_list = { 
+        "message" => "Created List",
+        "data" => { 
+          "id" => 9,
+          "name" => "Create list",
+          "description" => "This is my list",
+          "public" => false,
+          "user_id" => 1,
+          "created_at" => "2020-07-01T22:01:58.137Z",
+          "updated_at" => "2020-07-01T22:01:58.137Z" 
+          }
+        }
+      
+      @description_blank = {
+        "message" => "List not created",
+        "data" => {
+          "description" => ["can't be blank"] 
+          }
+        }
+      
+        @name_blank = { 
+        "message" => "List not created",
+        "data" => {
+          "name" => ["can't be blank"] 
+          }
+        }
+
+      @public_blank = {
+        "message" => "List not created",
+        "data" => { 
+          "public" => ["is not included in the list","is reserved"] 
+        }
+      }
     end
 
     context "when valid" do
@@ -214,7 +243,8 @@ RSpec.describe ListsController, type: :controller do
     context "when valid" do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        get :update, format: :json, params: { id: @list.id, name: "New name" }
+        @new_name = "New name"
+        get :update, format: :json, params: { id: @list.id, name: @new_name }
         @json_response = JSON.parse(response.body)
       end
 
@@ -224,6 +254,10 @@ RSpec.describe ListsController, type: :controller do
 
       it "The list has been updated successfully" do
         expect(@json_response['message']).to eq('Updated list')
+      end
+
+      it "JSON body response contains expected list name" do
+        expect(@json_response['data']['name']).to eq(@new_name)
       end
     end
 
@@ -283,7 +317,7 @@ RSpec.describe ListsController, type: :controller do
         @json_response = JSON.parse(response.body)
       end
 
-      it "The user has been deleted successfully" do
+      it "The list has been deleted successfully" do
         expect(@json_response['message']).to eq('The list has been deleted')
       end
     end
