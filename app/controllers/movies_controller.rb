@@ -82,20 +82,23 @@ class MoviesController < ApplicationController
           if @list.movies.include? @movie
             if @list.movies.delete(@movie)
               render json: {
-                message: "The film has been successfully removed from this list.", 
-              }, status: :ok
+                message: "The movie has been successfully removed from this list", 
+              }, status: :no_content
             else
               render json: {
-                message: 'The list could not be updated'
+                message: 'The movie could not be added to the list'
               },
               status: :unprocessable_entity
             end
           else
-            render json: { message: "The movie is not in this list" }, status: :unprocessable_entity
+            render json: { 
+              message: "The movie is not in this list"
+              },
+              status: :unprocessable_entity
           end
         else
           render json: { 
-            message: "You cannot add movies to other users' lists"
+            message: "You cannot delete movies from other users' lists"
           },
           status: :unauthorized
         end
