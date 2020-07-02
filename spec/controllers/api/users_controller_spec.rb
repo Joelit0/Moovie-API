@@ -220,7 +220,7 @@ RSpec.describe UsersController, type: :controller do
         end
       end
         
-      context "when the user cannot be deleted" do
+      context "when the user does not exist" do
         before do 
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: "False_id" }
@@ -249,6 +249,163 @@ RSpec.describe UsersController, type: :controller do
         
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot delete other users")
+        end
+      end
+    end
+  end
+  describe "Photo path" do
+    describe "PUT #add_photo_path" do
+      context "when valid" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          @photo_path = "www.photo_path.com"
+          put :add_photo_path, format: :json, params: { id: @user.id, photo_path: @photo_path }
+          @json_response = JSON.parse(response.body)
+        end
+  
+        it "returns http no content" do
+          expect(response).to have_http_status(:ok)
+        end
+  
+        it "The user has been updated successfully" do
+          expect(@json_response['message']).to eq('The photo path has been updated correctly')
+        end
+  
+        it "JSON body response contains expected user full_name" do
+          expect(@json_response['photo_path']).to eq(@photo_path)
+        end
+      end
+      context "when invalid" do
+        context "when the user does not authenticate" do
+          before do 
+            put :add_photo_path, format: :json, params: { id: @user.id}
+            @json_response = JSON.parse(response.body)
+            @nil_token = { "errors" => "Nil JSON web token" }
+          end
+  
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+  
+          it "returns an error if token is nil" do
+            expect(@json_response).to eq(@nil_token)
+          end
+        end
+          
+        context "when the user does not exist" do
+          before do 
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :add_photo_path, format: :json, params: { id: "False id" }
+            @json_response = JSON.parse(response.body)
+          end
+          
+          it "returns http not found" do
+            expect(response).to have_http_status(:not_found)
+          end
+          
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq('The user does not exist')
+          end
+        end
+  
+        context "when the user's token does not match the user to display" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :add_photo_path, format: :json, params: { id: @user1.id }
+            @json_response = JSON.parse(response.body)
+          end
+  
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+          
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq("You cannot modify other users")
+          end
+        end
+      end
+    end
+    describe "DELETE #remove_photo_path" do
+      context "when valid" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :remove_photo_path, format: :json, params: { id: @user.id }
+          @json_response = JSON.parse(response.body)
+        end
+  
+        it "returns http no content" do
+          expect(response).to have_http_status(:ok)
+        end
+  
+        it "The user has been updated successfully" do
+          expect(@json_response['message']).to eq('The photo path has been removed correctly')
+        end
+      end
+      context "when invalid" do
+        context "when the user does not authenticate" do
+          before do 
+            delete :remove_photo_path, format: :json, params: { id: @user.id }
+            @json_response = JSON.parse(response.body)
+            @nil_token = { "errors" => "Nil JSON web token" }
+          end
+  
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+  
+          it "returns an error if token is nil" do
+            expect(@json_response).to eq(@nil_token)
+          end
+        end
+          
+        context "when the user does not exist" do
+          before do 
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            delete :remove_photo_path, format: :json, params: { id: "False id" }
+            @json_response = JSON.parse(response.body)
+          end
+          
+          it "returns http not found" do
+            expect(response).to have_http_status(:not_found)
+          end
+          
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq('The user does not exist')
+          end
+        end
+  
+        context "when the user's token does not match the user to display" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            delete :remove_photo_path, format: :json, params: { id: @user1.id }
+            @json_response = JSON.parse(response.body)
+          end
+  
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+          
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq("You cannot modify other users")
+          end
+        end
+        
+        context "when the photo path has already been removed" do
+          before do
+            @user = create(:user, photo_path: "")
+            @token = JsonWebToken.encode(user_id: @user.id)
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            delete :remove_photo_path, format: :json, params: { id: @user.id }
+            @json_response = JSON.parse(response.body)
+          end
+  
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+          
+          it "The photo path has already been removed" do
+            expect(@json_response['message']).to eq("The photo path has already been removed")
+          end
         end
       end
     end
