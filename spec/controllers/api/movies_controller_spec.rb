@@ -279,4 +279,95 @@ RSpec.describe MoviesController, type: :controller do
       end
     end
   end
+  describe "Movies and Lists" do
+    before do
+      @user = create(:user)
+      @movie = create(:movie)
+      @list = create(:list, user_id: @user.id)
+      @user1 = create(:user)
+      @list1 = create(:list, user_id: @user1.id)
+      @token = JsonWebToken.encode(user_id: @user.id)
+    end
+    
+    describe "PUT #add_movie_to_a_list" do
+      context "when valid" do
+        before do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+          @json_response = JSON.parse(response.body)
+        end
+        it "returns http no content" do
+          puts @json_response
+          expect(response).to have_http_status(:no_content)
+        end
+        it "The movie has been successfully added to the list" do
+          expect(@json_response['message']).to eq('The movie has been successfully added to the list')
+        end
+      end
+    
+      context "when invalid" do
+        context "when the user does not authenticate" do
+          before do
+            put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
+            @json_response = JSON.parse(response.body)
+            @nil_token = { "errors" => "Nil JSON web token" }
+          end
+    
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+  
+          it "returns an error if token is nil" do
+            expect(@json_response).to eq(@nil_token)
+          end
+        end
+        
+        context "when the list does not exist" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :add_movie_to_a_list, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
+            @json_response = JSON.parse(response.body)
+          end
+          
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:not_found)
+          end
+    
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq('The list does not exist')
+          end
+        end
+
+        context "when the movie does not exist" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :add_movie_to_a_list, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
+            @json_response = JSON.parse(response.body)
+          end
+          
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:not_found)
+          end
+    
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq('The movie does not exist')
+          end
+        end
+        
+        context "when the user's token does not match the user to display" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :add_movie_to_a_list, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
+            @json_response = JSON.parse(response.body)
+          end
+          it "returns http unauthorized" do
+            expect(response).to have_http_status(:unauthorized)
+          end
+          it "The user does not exist" do
+            expect(@json_response['message']).to eq("You cannot add movies to other users' lists")
+          end
+        end
+      end
+    end
+  end
 end

@@ -44,7 +44,7 @@ class MoviesController < ApplicationController
               render json: {
                 message: "The movie has been successfully added to the list", 
                 movie: @movie
-              }, status: :created
+              }, status: :no_content
             else
               render json: {
                 message: 'The list could not be updated'
