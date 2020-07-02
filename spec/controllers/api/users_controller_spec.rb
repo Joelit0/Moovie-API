@@ -73,7 +73,7 @@ RSpec.describe UsersController, type: :controller do
       context "when the user's token does not match the user to display" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          delete :show, format: :json, params: { id: @user1.id }
+          get :show, format: :json, params: { id: @user1.id }
           @json_response = JSON.parse(response.body)
         end
 

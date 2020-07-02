@@ -244,7 +244,7 @@ RSpec.describe ListsController, type: :controller do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         @new_name = "New name"
-        get :update, format: :json, params: { id: @list.id, name: @new_name }
+        put :update, format: :json, params: { id: @list.id, name: @new_name }
         @json_response = JSON.parse(response.body)
       end
 
@@ -264,7 +264,7 @@ RSpec.describe ListsController, type: :controller do
     context "when invalid" do
       context "when the user does not authenticate" do
         before do
-          get :update, format: :json, params: { id: @list.id, name: "New name" }
+          put :update, format: :json, params: { id: @list.id, name: "New name" }
           @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
@@ -281,7 +281,7 @@ RSpec.describe ListsController, type: :controller do
       context "when the list does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          get :update, format: :json, params: { id: "False id", name: "New name" }
+          put :update, format: :json, params: { id: "False id", name: "New name" }
           @json_response = JSON.parse(response.body)
         end
         
@@ -297,7 +297,7 @@ RSpec.describe ListsController, type: :controller do
       context "when the user's token does not match the user to display" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-          get :update, format: :json, params: { id: @list1.id, name: "New name" }
+          put :update, format: :json, params: { id: @list1.id, name: "New name" }
           @json_response = JSON.parse(response.body)
         end
         it "returns http unauthorized" do
