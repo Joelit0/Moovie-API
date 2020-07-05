@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   post '/lists', to:'lists#create'
   put '/lists/:id', to:'lists#update'
   delete '/lists/:id', to:'lists#destroy'
-  put '/movies/:movie_id/lists/:list_id', to:'lists#add_movie'
-  delete '/movies/:movie_id/lists/:list_id', to:'lists#remove_movie'
+  put '/lists/:list_id/movies/:movie_id', to:'lists#add_movie'
+  delete '/lists/:list_id/movies/:movie_id', to:'lists#remove_movie'
 
   post '/auth/login', to: 'authentication#login'
   get '/*a', to: 'application#not_found'
