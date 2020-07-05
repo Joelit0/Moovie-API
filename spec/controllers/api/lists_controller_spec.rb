@@ -424,7 +424,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:not_found)
           end
     
-          it "The user does not exist" do
+          it "The list  does not exist" do
             expect(@json_response['message']).to eq('The list does not exist')
           end
         end
@@ -440,7 +440,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:not_found)
           end
     
-          it "The user does not exist" do
+          it "The movie does not exist" do
             expect(@json_response['message']).to eq('The movie does not exist')
           end
         end
@@ -520,7 +520,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:not_found)
           end
     
-          it "The user does not exist" do
+          it "The movie does not exist" do
             expect(@json_response['message']).to eq('The movie does not exist')
           end
         end
@@ -536,7 +536,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:not_found)
           end
     
-          it "The user does not exist" do
+          it "The list does not exist" do
             expect(@json_response['message']).to eq('The list does not exist')
           end
         end
