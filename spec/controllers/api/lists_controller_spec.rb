@@ -176,6 +176,7 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+  
   describe "POST #create" do
     before do
       @created_list = { 
@@ -239,6 +240,7 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+
   describe "PUT #update" do
     context "when valid" do
       before do
@@ -309,6 +311,7 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+
   describe 'DELETE #destroy' do
     context "when valid" do
       before do 
@@ -371,6 +374,7 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
+
   describe "Movies and Lists" do
     before do
       @user = create(:user)
