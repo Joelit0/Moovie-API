@@ -414,8 +414,8 @@ RSpec.describe ListsController, type: :controller do
           expect(response).to have_http_status(:no_content)
         end
 
-        it "The movie has been successfully added to the list" do
-          expect(@json_response['message']).to eq('The movie has been successfully added to the list')
+        it "The movie has been successfully added from the list" do
+          expect(@json_response['message']).to eq('The movie has been successfully added from the list')
         end
       end
     
@@ -480,11 +480,11 @@ RSpec.describe ListsController, type: :controller do
           end
 
           it "The user does not exist" do
-            expect(@json_response['message']).to eq("You cannot add movies to other users' lists")
+            expect(@json_response['message']).to eq("You cannot add movies from other users' lists")
           end
         end
         
-        context "when the movie is already added to the list" do
+        context "when the movie is already added from the list" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             @list = create(:list, user_id: @user.id, movies: [@movie])
@@ -496,8 +496,8 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:unprocessable_entity)
           end
           
-          it "The movie is already added to the list" do
-            expect(@json_response['message']).to eq("The movie has already been added to this list")
+          it "The movie is already added from the list" do
+            expect(@json_response['message']).to eq("The movie has already been added from this list")
           end
         end
       end
@@ -516,7 +516,7 @@ RSpec.describe ListsController, type: :controller do
           expect(response).to have_http_status(:no_content)
         end
 
-        it "The movie has been successfully removed to the list" do
+        it "The movie has been successfully removed from the list" do
           expect(@json_response['message']).to eq('The movie has been successfully removed from this list')
         end
       end
@@ -598,7 +598,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:unprocessable_entity)
           end
           
-          it "The movie is already removed to the list" do
+          it "The movie is already removed from the list" do
             expect(@json_response['message']).to eq("The movie is not in this list")
           end
         end
