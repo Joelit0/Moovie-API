@@ -210,7 +210,6 @@ RSpec.describe UsersController, type: :controller do
       end
 
       it "The user could not be found because it was removed" do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :show, format: :json, params: { id: @user.id }
         @json_response = JSON.parse(response.body)
 
