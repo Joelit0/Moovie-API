@@ -157,6 +157,7 @@ class UsersController < ApplicationController
       status: :not_found
     end
   end
+  
   private 
 
   def user_params
