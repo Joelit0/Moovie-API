@@ -43,6 +43,7 @@ RSpec.describe UsersController, type: :controller do
         expect(@json_response['lists']).to eq([])
       end
     end
+    
     context "when invalid" do
       context  "when the user does not authenticate" do
         before do
@@ -59,6 +60,7 @@ RSpec.describe UsersController, type: :controller do
           expect(@json_response).to eq(@nil_token)
         end
       end
+
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
@@ -74,6 +76,7 @@ RSpec.describe UsersController, type: :controller do
           expect(@json_response['message']).to eq('The user does not exist')
         end
       end
+
       context "when the user's token does not match the user to display" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
@@ -91,6 +94,7 @@ RSpec.describe UsersController, type: :controller do
       end
     end
   end
+
   describe "POST #Create" do
     before do 
       @created_user = { "message" => "Created user", "data" => { "id"=>307, "email" => "joelito@gmail.com", "full_name" => "Joelito Alayon" } }
@@ -119,6 +123,7 @@ RSpec.describe UsersController, type: :controller do
       end
     end
   end
+
   describe "PUT #update" do
     context "when valid" do
       before do
@@ -180,9 +185,11 @@ RSpec.describe UsersController, type: :controller do
           get :update, format: :json, params: { id: @user1.id}
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http unauthorized" do
           expect(response).to have_http_status(:unauthorized)
         end
+
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot modify other users")
         end
@@ -253,6 +260,7 @@ RSpec.describe UsersController, type: :controller do
       end
     end
   end
+
   describe "Photo path" do
     describe "PUT #add_photo_path" do
       context "when valid" do
@@ -275,6 +283,7 @@ RSpec.describe UsersController, type: :controller do
           expect(@json_response['photo_path']).to eq(@photo_path)
         end
       end
+      
       context "when invalid" do
         context "when the user does not authenticate" do
           before do 
@@ -325,6 +334,7 @@ RSpec.describe UsersController, type: :controller do
         end
       end
     end
+
     describe "DELETE #remove_photo_path" do
       context "when valid" do
         before do
@@ -341,6 +351,7 @@ RSpec.describe UsersController, type: :controller do
           expect(@json_response['message']).to eq('The photo path has been removed correctly')
         end
       end
+
       context "when invalid" do
         context "when the user does not authenticate" do
           before do 
