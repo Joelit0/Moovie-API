@@ -11,6 +11,7 @@ RSpec.describe MoviesController, type: :controller do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
       end
+      
       context "when all the movies are obtained correctly" do
         before do
           @movie = create(:movie)
@@ -65,13 +66,13 @@ RSpec.describe MoviesController, type: :controller do
           @movie_2 = create(:movie, release_date: "2002-01-12") 
         end
 
-        it 'sorting asc release_date' do
+        it "sorting asc release_date" do
           get :index, params: { sort_by: 'release_date', sort_order: 'asc' }
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_1.as_json, @movie_2.as_json])
         end
 
-        it 'sorting desc release_date' do
+        it "sorting desc release_date" do
           get :index, params: { sort_by: 'release_date', sort_order: 'desc' }
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_2.as_json, @movie_1.as_json])
@@ -84,13 +85,13 @@ RSpec.describe MoviesController, type: :controller do
           @movie_2 = create(:movie, title: "The Lord of the Rings: The Two Towers") 
         end
 
-        it 'sorting asc title' do
+        it "sorting asc title" do
           get :index, params: { sort_by: 'title', sort_order: 'asc' }
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_1.as_json, @movie_2.as_json])
         end
 
-        it 'sorting desc title' do
+        it "sorting desc title" do
           get :index, params: { sort_by: 'title', sort_order: 'desc' }
           json_body = JSON.parse(response.body)
           expect(json_body).to match([@movie_2.as_json, @movie_1.as_json])
@@ -104,13 +105,13 @@ RSpec.describe MoviesController, type: :controller do
           end
         end
 
-        it 'the page 1 should contain a 20 movies' do
+        it "the page 1 should contain a 20 movies" do
           get :index, params: { page: 1 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 20
         end
 
-        it 'the page 2 should contain a 1 movie' do
+        it "the page 2 should contain a 1 movie" do
           get :index, params: { page: 2 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 1
@@ -136,6 +137,7 @@ RSpec.describe MoviesController, type: :controller do
         end
       end
     end
+
     context "when invalid" do
       context "when movies are not paged correctly" do
         before do 
@@ -158,6 +160,7 @@ RSpec.describe MoviesController, type: :controller do
           expect(json_body.length).to_not eq 0
         end
       end
+
       context "when movies are not filtered by title correctly" do
         before do
           @movie_1 = create(:movie)    
@@ -177,6 +180,7 @@ RSpec.describe MoviesController, type: :controller do
           expect(json_body).to_not match([@movie_1.as_json])
         end
       end
+
       context  "when the user does not authenticate" do
         before do
           get :index, format: :json
@@ -203,6 +207,7 @@ RSpec.describe MoviesController, type: :controller do
         get :show, params: { id: @movie1.id }
         @json_response = JSON.parse(response.body)
       end
+
       context "when it returns the expected movie" do
         it "should return http succes" do
           expect(response).to have_http_status(:success)
@@ -245,6 +250,7 @@ RSpec.describe MoviesController, type: :controller do
         end
       end
     end
+
     context "when invalid" do
       context  "when the user does not authenticate" do
         before do
@@ -262,6 +268,7 @@ RSpec.describe MoviesController, type: :controller do
           expect(@json_response).to eq(@nil_token)
         end
       end
+      
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"

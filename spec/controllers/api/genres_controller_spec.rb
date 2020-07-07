@@ -6,6 +6,7 @@ RSpec.describe GenresController, type: :controller do
     @user = create(:user)
     @token = JsonWebToken.encode(user_id: @user.id)
   end
+
   describe "GET #index" do
     context "when valid" do
       before do
@@ -26,6 +27,7 @@ RSpec.describe GenresController, type: :controller do
         expect(@json_response.first['name']).to eq(@genre.name)
       end
     end
+    
     context "when invalid" do
       before do
         get :index, format: :json
