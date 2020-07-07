@@ -44,6 +44,7 @@ RSpec.describe ListsController, type: :controller do
         expect(@json_response.first['user_id']).to eq(@user.id)
       end
     end
+
     context "when invalid" do
       context "when the user does not authenticate" do
         before do
@@ -60,6 +61,7 @@ RSpec.describe ListsController, type: :controller do
           expect(@json_response).to eq(@nil_token)
         end
       end
+
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
@@ -76,16 +78,19 @@ RSpec.describe ListsController, type: :controller do
         end
       end
     end
+
     context "when the user's token does not match the user to display" do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :index, format: :json, params: { id: @user1.id }
         @json_response = JSON.parse(response.body)
       end
+
       it "returns http unauthorized" do
         expect(response).to have_http_status(:unauthorized)
       end
-      it "The user does not exist" do
+      
+      it "The user cannot modify other users" do
         expect(@json_response['message']).to eq("You cannot see other users' lists")
       end
     end

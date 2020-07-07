@@ -11,7 +11,7 @@ RSpec.describe MoviesController, type: :controller do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
       end
-      
+
       context "when all the movies are obtained correctly" do
         before do
           @movie = create(:movie)
@@ -147,13 +147,13 @@ RSpec.describe MoviesController, type: :controller do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         end
 
-        it 'to make it false, the page 1 should contain a 21 movies' do
+        it "to make it false, the page 1 should contain a 21 movies" do
           get :index, params: { page: 1 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 21
         end
 
-        it 'to make it false, the page 2 should contain a 0 movie' do
+        it "to make it false, the page 2 should contain a 0 movie" do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: { page: 2 }
           json_body = JSON.parse(response.body)
