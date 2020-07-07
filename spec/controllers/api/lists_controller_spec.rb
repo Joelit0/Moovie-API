@@ -502,7 +502,7 @@ RSpec.describe ListsController, type: :controller do
         end
       end
     end
-    
+
     describe "DELETE #remove_movie" do
       context "when valid" do
         before do
@@ -516,7 +516,7 @@ RSpec.describe ListsController, type: :controller do
           expect(response).to have_http_status(:no_content)
         end
 
-        it "The movie has been successfully added to the list" do
+        it "The movie has been successfully removed to the list" do
           expect(@json_response['message']).to eq('The movie has been successfully removed from this list')
         end
       end
@@ -598,7 +598,7 @@ RSpec.describe ListsController, type: :controller do
             expect(response).to have_http_status(:unprocessable_entity)
           end
           
-          it "The movie is already added to the list" do
+          it "The movie is already removed to the list" do
             expect(@json_response['message']).to eq("The movie is not in this list")
           end
         end
