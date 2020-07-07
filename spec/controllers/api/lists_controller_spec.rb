@@ -502,6 +502,7 @@ RSpec.describe ListsController, type: :controller do
         end
       end
     end
+    
     describe "DELETE #remove_movie" do
       context "when valid" do
         before do
