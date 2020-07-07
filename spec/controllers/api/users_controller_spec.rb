@@ -275,7 +275,7 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to have_http_status(:ok)
         end
   
-        it "The user has been updated successfully" do
+        it "The photo path has been updated correctly" do
           expect(@json_response['message']).to eq('The photo path has been updated correctly')
         end
   
@@ -347,8 +347,8 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to have_http_status(:ok)
         end
   
-        it "The user has been updated successfully" do
-          expect(@json_response['message']).to eq('The photo path has been removed correctly')
+        it "The photo path has been removed" do
+          expect(@json_response['message']).to eq('The photo path has been removed from this list')
         end
       end
 
@@ -415,7 +415,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The photo path has already been removed" do
-            expect(@json_response['message']).to eq("The photo path has already been removed")
+            expect(@json_response['message']).to eq("The photo path has already been removed from this list")
           end
         end
       end

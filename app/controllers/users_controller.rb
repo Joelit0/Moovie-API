@@ -109,7 +109,7 @@ class UsersController < ApplicationController
           render json: { message: "The photo path has been updated correctly", photo_path: @user.photo_path }, status: :ok
         else
           render json: { 
-            message: 'The photo path has not been updated'
+            message: 'The photo path could not be updated'
           },
           status: :unprocessable_entity
         end
@@ -133,13 +133,13 @@ class UsersController < ApplicationController
     if @user
       if @user.id == @current_user.id
         if @user.photo_path == ""
-          render json: { message: "The photo path has already been removed" }, status: :unprocessable_entity
+          render json: { message: "The photo path has already been removed from this list" }, status: :unprocessable_entity
         else
           if @user.update_attributes(photo_path: "")
-            render json: { message: "The photo path has been removed correctly" }, status: :ok
+            render json: { message: "The photo path has been removed from this list" }, status: :ok
           else
             render json: { 
-              message: 'The photo path has not been removed'
+              message: 'The photo path could not be removed'
             },
             status: :unprocessable_entity
           end
