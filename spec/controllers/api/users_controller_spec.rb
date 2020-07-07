@@ -208,6 +208,14 @@ RSpec.describe UsersController, type: :controller do
       it "The user has been deleted successfully" do
         expect(@json_response['message']).to eq('The user has been deleted')
       end
+
+      it "The user could not be found because it was removed" do
+        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        get :show, format: :json, params: { id: @user.id }
+        @json_response = JSON.parse(response.body)
+
+        expect(@json_response['errors']).to eq("Couldn't find User with 'id'=#{@user.id}")
+      end
     end
 
     context "when invalid" do
