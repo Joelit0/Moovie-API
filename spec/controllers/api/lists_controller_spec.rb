@@ -320,15 +320,25 @@ RSpec.describe ListsController, type: :controller do
 
   describe 'DELETE #destroy' do
     context "when valid" do
-      before do 
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        delete :destroy, format: :json, params: { id: @list.id }
-        @json_response = JSON.parse(response.body)
-      end
+      context "when the list has been deleted " do
+        before do 
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          delete :destroy, format: :json, params: { id: @list.id }
+          @json_response = JSON.parse(response.body)
+        end
 
-      it "The list has been deleted successfully" do
-        expect(@json_response['message']).to eq('The list has been deleted')
-      end
+        it "The list has been deleted successfully" do
+          expect(@json_response['message']).to eq('The list has been deleted')
+        end
+
+        it "The list doesn't exist anymore" do
+          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+          get :show, format: :json, params: { id: @list.id }
+          @json_response = JSON.parse(response.body)
+
+          expect(@json_response['message']).to eq('The list does not exist')
+        end
+      end     
     end
 
     context "when invalid" do
@@ -582,7 +592,7 @@ RSpec.describe ListsController, type: :controller do
             delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
           end
-          
+
           it "returns http unauthorized" do
             expect(response).to have_http_status(:unprocessable_entity)
           end
