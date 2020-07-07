@@ -131,13 +131,13 @@ class ListsController < ApplicationController
         if @list.user_id == @current_user.id
           if @list.movies.include? @movie
             render json: {
-              message: 'The movie has already been added from this list'
+              message: 'The movie has already been added to this list'
             },
             status: :unprocessable_entity
           else
             if @list.movies << @movie
               render json: {
-                message: "The movie has been successfully added from the list", 
+                message: "The movie has been successfully added to the list", 
                 movie: @movie
               }, status: :no_content
             else
@@ -149,7 +149,7 @@ class ListsController < ApplicationController
           end
         else
           render json: { 
-            message: "You cannot add movies from other users' lists"
+            message: "You cannot add movies to other users' lists"
           },
           status: :unauthorized
         end
