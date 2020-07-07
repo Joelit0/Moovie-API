@@ -181,7 +181,7 @@ class ListsController < ApplicationController
               }, status: :no_content
             else
               render json: {
-                message: 'The movie could not be added to the list'
+                message: 'The movie does not exist in this list'
               },
               status: :unprocessable_entity
             end
