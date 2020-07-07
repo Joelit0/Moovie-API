@@ -45,6 +45,7 @@ RSpec.describe ListsController, type: :controller do
         expect(@json_response.first['user_id']).to eq(@user.id)
       end
     end
+
     context "when invalid" do
       context "when the user does not authenticate" do
         before do
@@ -61,6 +62,7 @@ RSpec.describe ListsController, type: :controller do
           expect(@json_response).to eq(@nil_token)
         end
       end
+
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
@@ -77,6 +79,7 @@ RSpec.describe ListsController, type: :controller do
         end
       end
     end
+
     context "when the user's token does not match the user to display" do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
@@ -128,6 +131,7 @@ RSpec.describe ListsController, type: :controller do
         expect(@json_response['user_id']).to eq(@user.id)
       end
     end
+
     context "when invalid" do
       context "when the user does not authenticate" do
         before do
@@ -176,7 +180,7 @@ RSpec.describe ListsController, type: :controller do
       end
     end
   end
-  
+
   describe "POST #create" do
     before do
       @created_list = { 
@@ -302,9 +306,11 @@ RSpec.describe ListsController, type: :controller do
           put :update, format: :json, params: { id: @list1.id, name: "New name" }
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http unauthorized" do
           expect(response).to have_http_status(:unauthorized)
         end
+
         it "The user does not exist" do
           expect(@json_response['message']).to eq("You cannot update other users lists")
         end
@@ -324,6 +330,7 @@ RSpec.describe ListsController, type: :controller do
         expect(@json_response['message']).to eq('The list has been deleted')
       end
     end
+
     context "when invalid" do
       context "when the user does not authenticate" do
         before do 
@@ -392,9 +399,11 @@ RSpec.describe ListsController, type: :controller do
           put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http no content" do
           expect(response).to have_http_status(:no_content)
         end
+
         it "The movie has been successfully added to the list" do
           expect(@json_response['message']).to eq('The movie has been successfully added to the list')
         end
@@ -455,9 +464,11 @@ RSpec.describe ListsController, type: :controller do
             put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
             @json_response = JSON.parse(response.body)
           end
+
           it "returns http unauthorized" do
             expect(response).to have_http_status(:unauthorized)
           end
+
           it "The user does not exist" do
             expect(@json_response['message']).to eq("You cannot add movies to other users' lists")
           end
@@ -470,6 +481,7 @@ RSpec.describe ListsController, type: :controller do
             put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
           end
+
           it "returns http unauthorized" do
             expect(response).to have_http_status(:unprocessable_entity)
           end
@@ -488,9 +500,11 @@ RSpec.describe ListsController, type: :controller do
           delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
           @json_response = JSON.parse(response.body)
         end
+
         it "returns http no content" do
           expect(response).to have_http_status(:no_content)
         end
+
         it "The movie has been successfully added to the list" do
           expect(@json_response['message']).to eq('The movie has been successfully removed from this list')
         end
@@ -551,9 +565,11 @@ RSpec.describe ListsController, type: :controller do
             delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
             @json_response = JSON.parse(response.body)
           end
+
           it "returns http unauthorized" do
             expect(response).to have_http_status(:unauthorized)
           end
+
           it "The user does not exist" do
             expect(@json_response['message']).to eq("You cannot delete movies from other users' lists")
           end
@@ -566,6 +582,7 @@ RSpec.describe ListsController, type: :controller do
             delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
             @json_response = JSON.parse(response.body)
           end
+          
           it "returns http unauthorized" do
             expect(response).to have_http_status(:unprocessable_entity)
           end

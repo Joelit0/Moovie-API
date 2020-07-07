@@ -11,6 +11,7 @@ RSpec.describe MoviesController, type: :controller do
       before do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
       end
+
       context "when all the movies are obtained correctly" do
         before do
           @movie = create(:movie)
@@ -203,6 +204,7 @@ RSpec.describe MoviesController, type: :controller do
         get :show, params: { id: @movie1.id }
         @json_response = JSON.parse(response.body)
       end
+
       context "when it returns the expected movie" do
         it "should return http succes" do
           expect(response).to have_http_status(:success)
@@ -245,6 +247,7 @@ RSpec.describe MoviesController, type: :controller do
         end
       end
     end
+
     context "when invalid" do
       context  "when the user does not authenticate" do
         before do
@@ -262,6 +265,7 @@ RSpec.describe MoviesController, type: :controller do
           expect(@json_response).to eq(@nil_token)
         end
       end
+      
       context "when the user does not exist" do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
