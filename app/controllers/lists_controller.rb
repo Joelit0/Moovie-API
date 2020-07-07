@@ -210,6 +210,7 @@ class ListsController < ApplicationController
       status: :not_found
     end
   end
+  
   private
 
   def list_params
