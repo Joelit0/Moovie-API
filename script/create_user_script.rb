@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-MOOVIE_API_URL = "http://localhost:3001/users"
+MOOVIE_API_URL = "http://localhost:3000/users"
 
 puts "*Ingrese su nombre completo"
 puts '==============================================================='

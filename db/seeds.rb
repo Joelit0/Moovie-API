@@ -24,7 +24,7 @@ Genre.create(name: 'Adventure')
 movie1 = Movie.create({
   title: "The Lord of the Rings: The Fellowship of the Ring",
   tagline: "One ring to rule them all",
-  overview: "The future of civilization rests in the fate of the One Ring, which has been lost for centuries. Powerful forces are unrelenting in their search for it. But fate has placed it in the hands of a young Hobbit named Frodo Baggins (Elijah Wood), who inherits the Ring and steps into legend. A daunting task lies ahead for Frodo when he becomes the Ringbearer - to destroy the One Ring in the fires of Mount Doom where it was forged." , release_date: "2002-01-04",
+  overview: "The future of civilization rests in the fate of the One Ring, which has been lost for centuries. Powerful forces are unrelenting in their search for it. But fate has placed it in the hands of a young Hobbit named Frodo Baggins (Elijah Wood), who inherits the Ring and steps into legend. A daunting task lies ahead for Frodo when he becomes the Ringbearer - to destroy the One Ring in the fires of Mount Doom where it was forged." ,
   release_date: "2001-01-12",
   poster_url: "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg",
   backdrop_url: "https://m.media-amazon.com/images",
@@ -53,19 +53,21 @@ movie2.update(videos: [video1])
 list1 = List.create(
   name: "Joel List",
   description: "A movies list",
-  public: true
+  public: true,
+  user_id: user1.id,
+  movies: [movie1, movie2]
 )
-
-list1.update(user_id: [1])
-list1.update(movies: [movie1])
 
 list2 = List.create(
   name: "Joel List 2",
   description: "A movies list 2",
-  public: false
+  public: true,
+  user_id: user1.id
 )
-list2.update(user_id: [1])
-list2.update(movies: [movie2])
 
-# UPDATE USER1 LISTS
-user1.update(lists: [list1, list2])
+list3 = List.create(
+  name: "Joel List 3",
+  description: "A movies list 3",
+  public: false,
+  user_id: user1.id
+)

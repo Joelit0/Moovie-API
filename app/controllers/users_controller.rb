@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
     if @user
       if @user.id == @current_user.id
-        render json: @current_user.as_json(except: %i[created_at updated_at], :include => [:lists]), status: :ok
+        render json: @current_user.as_json(except: %i[created_at updated_at]), status: :ok
       else
         render json: { 
           message: 'You cannot see other users profile'
@@ -49,7 +49,7 @@ class UsersController < ApplicationController
             message: "Updated user",
             data: @user 
           },
-          status: :ok
+          status: :no_content
         else
           render json: {
             message: "User not updated"
