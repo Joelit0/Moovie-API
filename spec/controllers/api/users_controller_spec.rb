@@ -270,7 +270,7 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           @photo_path = "www.photo_path.com"
-          put :add_photo_path, format: :json, params: { id: @user.id, photo_path: @photo_path }
+          put :update_photo_path, format: :json, params: { id: @user.id, photo_path: @photo_path }
           @json_response = JSON.parse(response.body)
         end
   
@@ -288,9 +288,21 @@ RSpec.describe UsersController, type: :controller do
       end
       
       context "when invalid" do
+        context "when the user pass other params" do
+          before do
+            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+            put :update_photo_path, format: :json, params: { id: @user.id, full_name: "Joel Alayon" }
+            @json_response = JSON.parse(response.body)
+          end
+
+          it "The user must pass the correct parameters" do
+            expect(@json_response['message']).to eq("You must pass the parameter 'photo_path' to update it")
+          end
+        end
+
         context "when the user does not authenticate" do
           before do 
-            put :add_photo_path, format: :json, params: { id: @user.id}
+            put :update_photo_path, format: :json, params: { id: @user.id}
             @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
@@ -307,7 +319,7 @@ RSpec.describe UsersController, type: :controller do
         context "when the user does not exist" do
           before do 
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_photo_path, format: :json, params: { id: "False id" }
+            put :update_photo_path, format: :json, params: { id: "False id" }
             @json_response = JSON.parse(response.body)
           end
           
@@ -323,7 +335,7 @@ RSpec.describe UsersController, type: :controller do
         context "when the user's token does not match the user to display" do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_photo_path, format: :json, params: { id: @user1.id }
+            put :update_photo_path, format: :json, params: { id: @user1.id }
             @json_response = JSON.parse(response.body)
           end
   
@@ -332,7 +344,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user cannot modify other users" do
-            expect(@json_response['message']).to eq("You cannot modify other users")
+            expect(@json_response['message']).to eq("You cannot modify other users' photo path")
           end
         end
       end
@@ -351,7 +363,7 @@ RSpec.describe UsersController, type: :controller do
         end
   
         it "The photo path has been removed" do
-          expect(@json_response['message']).to eq('The photo path has been removed from this list')
+          expect(@json_response['message']).to eq('The photo path has been removed from this user')
         end
       end
 
@@ -400,7 +412,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user cannot modify other users" do
-            expect(@json_response['message']).to eq("You cannot modify other users")
+            expect(@json_response['message']).to eq("You cannot delete other users' photo path")
           end
         end
         
@@ -418,7 +430,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The photo path has already been removed" do
-            expect(@json_response['message']).to eq("The photo path has already been removed from this list")
+            expect(@json_response['message']).to eq("The photo path has already been removed from this user")
           end
         end
       end

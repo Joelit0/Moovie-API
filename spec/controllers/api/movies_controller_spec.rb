@@ -105,13 +105,13 @@ RSpec.describe MoviesController, type: :controller do
           end
         end
 
-        it "the page 1 should contain a 20 movies" do
+        it "the page 1 should contains 20 movies" do
           get :index, params: { page: 1 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 20
         end
 
-        it "the page 2 should contain a 1 movie" do
+        it "the page 2 should contains 1 movie" do
           get :index, params: { page: 2 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to eq 1
@@ -147,37 +147,17 @@ RSpec.describe MoviesController, type: :controller do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         end
 
-        it "to make it false, the page 1 should contain a 21 movies" do
+        it "to make it false, the page 1 should contains 21 movies" do
           get :index, params: { page: 1 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 21
         end
 
-        it "to make it false, the page 2 should contain a 0 movie" do
+        it "to make it false, the page 2 should contains 0 movies" do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: { page: 2 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 0
-        end
-      end
-
-      context "when movies are not filtered by title correctly" do
-        before do
-          @movie_1 = create(:movie)    
-          @movie_2 = create(:movie, title: "The Lord of the Rings: The Two Towers") 
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-        end
-
-        it "to make it false, should show a movie 2" do
-          get :index, params: { title: "The Lord of the Rings: The Fellowship of the Ring" }
-          json_body = JSON.parse(response.body)
-          expect(json_body).to_not match([@movie_2.as_json])
-        end
-
-        it "to make it false, should show a movie 1" do
-          get :index, params: { title: "The Lord of the Rings: The Two Towers" }
-          json_body = JSON.parse(response.body)
-          expect(json_body).to_not match([@movie_1.as_json])
         end
       end
 
