@@ -282,7 +282,7 @@ RSpec.describe UsersController, type: :controller do
           expect(@json_response['message']).to eq('The photo path has been updated correctly')
         end
   
-        it "JSON body response contains expected user full_name" do
+        it "JSON body response contains expected user photo path" do
           expect(@json_response['photo_path']).to eq(@photo_path)
         end
       end
