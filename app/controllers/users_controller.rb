@@ -6,11 +6,7 @@ class UsersController < ApplicationController
 
     if @user
       if @user.id == @current_user.id
-<<<<<<< Updated upstream
-        render json: @current_user.as_json(except: %i[created_at updated_at]), status: :ok
-=======
         render json: @current_user.as_json(except: %i[created_at updated_at], include: [:lists]), status: :ok
->>>>>>> Stashed changes
       else
         render json: {
           message: "You cannot see other users profile"
