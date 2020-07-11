@@ -1,22 +1,13 @@
-require 'rails_helper'
+require "spec_helper"
 
 RSpec.describe MoviesController, type: :controller do
-  before do 
-    @user = create(:user)
-    @token = JsonWebToken.encode(user_id: @user.id)
-  end
-  
   describe "GET #index" do
     context "when valid" do 
-      before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-      end
 
       context "when all the movies are obtained correctly" do
         before do
           @movie = create(:movie)
           get :index
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http success" do
@@ -24,39 +15,39 @@ RSpec.describe MoviesController, type: :controller do
         end
         
         it "JSON body response contains expected movies attributes" do
-          expect(@json_response.first.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at"])
+          expect(json.first.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at"])
         end
         
         it "JSON body response contains expected movie id" do
-          expect(@json_response.first['id']).to eq(@movie.id)
+          expect(json.first['id']).to eq(@movie.id)
         end
 
         it "JSON body response contains expected movie title" do
-          expect(@json_response.first['title']).to eq(@movie.title)
+          expect(json.first['title']).to eq(@movie.title)
         end
 
         it "JSON body response contains expected movie tagline" do
-          expect(@json_response.first['tagline']).to eq(@movie.tagline)
+          expect(json.first['tagline']).to eq(@movie.tagline)
         end
 
         it "JSON body response contains expected movie overview" do
-          expect(@json_response.first['overview']).to eq(@movie.overview)
+          expect(json.first['overview']).to eq(@movie.overview)
         end
         
         it "JSON body response contains expected movie release_date" do
-          expect(@json_response.first['release_date']).to eq(@movie.release_date.to_s)
+          expect(json.first['release_date']).to eq(@movie.release_date.to_s)
         end
 
         it "JSON body response contains expected movie poster_url" do
-          expect(@json_response.first['poster_url']).to eq(@movie.poster_url)
+          expect(json.first['poster_url']).to eq(@movie.poster_url)
         end
 
         it "JSON body response contains expected movie backdrop_url" do
-          expect(@json_response.first['backdrop_url']).to eq(@movie.backdrop_url)
+          expect(json.first['backdrop_url']).to eq(@movie.backdrop_url)
         end
 
         it "JSON body response contains expected movie imdb_id" do
-          expect(@json_response.first['imdb_id']).to eq(@movie.imdb_id)
+          expect(json.first['imdb_id']).to eq(@movie.imdb_id)
         end
       end
       
@@ -144,7 +135,6 @@ RSpec.describe MoviesController, type: :controller do
           21.times do 
             create(:movie)
           end
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         end
 
         it "to make it false, the page 1 should contain 21 movies" do
@@ -154,17 +144,15 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "to make it false, the page 2 should contain 0 movies" do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, params: { page: 2 }
           json_body = JSON.parse(response.body)
           expect(json_body.length).to_not eq 0
         end
       end
 
-      context  "when the user does not authenticate" do
+      context  "when the user does not authenticate", :nil_token do
         before do
           get :index, format: :json
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
         
@@ -173,7 +161,7 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
     end
@@ -182,10 +170,8 @@ RSpec.describe MoviesController, type: :controller do
   describe "GET #show" do
     context "when valid" do
       before do
-        @movie1 = create(:movie)
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        @movie1 = create(:movie)      
         get :show, params: { id: @movie1.id }
-        @json_response = JSON.parse(response.body)
       end
 
       context "when it returns the expected movie" do
@@ -194,49 +180,48 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "JSON body response contains expected movies attributes" do
-          expect(@json_response.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at", "videos"])
+          expect(json.keys).to match_array(["id","title", "tagline", "overview", "release_date", "poster_url", "backdrop_url", "imdb_id", "created_at", "updated_at", "videos"])
         end
         
         it "JSON body response contains expected movie title" do
-          expect(@json_response['title']).to eq(@movie1.title)
+          expect(json['title']).to eq(@movie1.title)
         end
 
         it "JSON body response contains expected movie tagline" do
-          expect(@json_response['tagline']).to eq(@movie1.tagline)
+          expect(json['tagline']).to eq(@movie1.tagline)
         end
 
         it "JSON body response contains expected movie overview" do
-          expect(@json_response['overview']).to eq(@movie1.overview)
+          expect(json['overview']).to eq(@movie1.overview)
         end
         
         it "JSON body response contains expected movie release_date" do
-          expect(@json_response['release_date']).to eq(@movie1.release_date.to_s)
+          expect(json['release_date']).to eq(@movie1.release_date.to_s)
         end
 
         it "JSON body response contains expected movie poster_url" do
-          expect(@json_response['poster_url']).to eq(@movie1.poster_url)
+          expect(json['poster_url']).to eq(@movie1.poster_url)
         end
 
         it "JSON body response contains expected movie backdrop_url" do
-          expect(@json_response['backdrop_url']).to eq(@movie1.backdrop_url)
+          expect(json['backdrop_url']).to eq(@movie1.backdrop_url)
         end
 
         it "JSON body response contains expected movie imdb_id" do
-          expect(@json_response['imdb_id']).to eq(@movie1.imdb_id)
+          expect(json['imdb_id']).to eq(@movie1.imdb_id)
         end
 
         it "JSON body response contains expected movie videos" do
-          expect(@json_response['videos']).to eq([])
+          expect(json['videos']).to eq([])
         end
       end
     end
 
     context "when invalid" do
-      context  "when the user does not authenticate" do
+      context  "when the user does not authenticate", :nil_token do
         before do
           @movie1 = create(:movie)
           get :show, params: { id: @movie1.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
 
@@ -245,15 +230,13 @@ RSpec.describe MoviesController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
       
       context "when the user does not exist" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :show, params: { id: "Invalid id" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http not found" do
@@ -261,7 +244,7 @@ RSpec.describe MoviesController, type: :controller do
         end
         
         it "The user does not exist" do
-          expect(@json_response['message']).to eq('The movie does not exist')
+          expect(json['message']).to eq('The movie does not exist')
         end
       end
     end

@@ -1,18 +1,11 @@
-require 'rails_helper'
+require "spec_helper"
+require 'jwt'
 
 RSpec.describe UsersController, type: :controller do
-  before do 
-    @user = create(:user)
-    @user1 = create(:user)
-    @token = JsonWebToken.encode(user_id: @user.id)
-  end
-
   describe "GET #show" do
     context "when valid" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :show, format: :json, params: { id: @user.id }
-        @json_response = JSON.parse(response.body)
       end
 
       it "returns http success" do
@@ -20,31 +13,30 @@ RSpec.describe UsersController, type: :controller do
       end
       
       it "JSON body response contains expected user attributes" do
-        expect(@json_response.keys).to match_array(["id", "email", "full_name", "photo_path"])
+        expect(json.keys).to match_array(["id", "email", "full_name", "photo_path", "lists"])
       end
       
       it "JSON body response contains expected user id" do
-        expect(@json_response['id']).to eq(@user.id)
+        expect(json['id']).to eq(@user.id)
       end
 
       it "JSON body response contains expected user email" do
-        expect(@json_response['email']).to eq(@user.email)
+        expect(json['email']).to eq(@user.email)
       end
 
       it "JSON body response contains expected user full_name" do
-        expect(@json_response['full_name']).to eq(@user.full_name)
+        expect(json['full_name']).to eq(@user.full_name)
       end
 
       it "JSON body response contains expected user photo_path" do
-        expect(@json_response['photo_path']).to eq(@user.photo_path)
+        expect(json['photo_path']).to eq(@user.photo_path)
       end
     end
     
     context "when invalid" do
-      context  "when the user does not authenticate" do
+      context  "when the user does not authenticate", :nil_token do
         before do
           get :show, format: :json ,params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
        
@@ -53,7 +45,7 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
 
@@ -61,7 +53,6 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :show, format: :json, params: { id: "false_id" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http not found" do
@@ -69,15 +60,13 @@ RSpec.describe UsersController, type: :controller do
         end
         
         it "The user does not exist" do
-          expect(@json_response['message']).to eq('The user does not exist')
+          expect(json['message']).to eq('The user does not exist')
         end
       end
 
       context "when the user's token does not match the user to display" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :show, format: :json, params: { id: @user1.id }
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http unauthorized" do
@@ -85,7 +74,7 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "The user cannot modify other users" do
-          expect(@json_response['message']).to eq("You cannot see other users profile")
+          expect(json['message']).to eq("You cannot see other users profile")
         end
       end
     end
@@ -126,27 +115,25 @@ RSpec.describe UsersController, type: :controller do
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         @full_name = "New full_name"
         put :update, format: :json, params: { id: @user.id, full_name: @full_name }
-        @json_response = JSON.parse(response.body)
       end
 
       it "returns http no content" do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
       end
 
       it "The user has been updated successfully" do
-        expect(@json_response['message']).to eq('Updated user')
+        expect(json['message']).to eq('Updated user')
       end
 
       it "JSON body response contains expected user full_name" do
-        expect(@json_response['data']['full_name']).to eq(@full_name)
+        expect(json['data']['full_name']).to eq(@full_name)
       end
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context  "when the user does not authenticate", :nil_token do
         before do
           put :update, format: :json, params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
   
@@ -155,7 +142,7 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
       
@@ -163,7 +150,6 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           put :update, format: :json, params: { id: "False id"}
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http unauthorized" do
@@ -171,7 +157,7 @@ RSpec.describe UsersController, type: :controller do
         end
   
         it "The user does not exist" do
-          expect(@json_response['message']).to eq('The user does not exist')
+          expect(json['message']).to eq('The user does not exist')
         end
       end
       
@@ -179,7 +165,6 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :update, format: :json, params: { id: @user1.id}
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http unauthorized" do
@@ -187,7 +172,7 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "The user cannot modify other users" do
-          expect(@json_response['message']).to eq("You cannot modify other users")
+          expect(json['message']).to eq("You cannot modify other users")
         end
       end
     end
@@ -198,26 +183,22 @@ RSpec.describe UsersController, type: :controller do
       before do 
         request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         delete :destroy, format: :json, params: { id: @user.id }
-        @json_response = JSON.parse(response.body)
       end
 
       it "The user has been deleted successfully" do
-        expect(@json_response['message']).to eq('The user has been deleted')
+        expect(json['message']).to eq('The user has been deleted')
       end
 
       it "The user could not be found because it was removed" do
         get :show, format: :json, params: { id: @user.id }
-        @json_response = JSON.parse(response.body)
-
-        expect(@json_response['errors']).to eq("Couldn't find User with 'id'=#{@user.id}")
+        expect(json['errors']).to eq("Couldn't find User with 'id'=#{@user.id}")
       end
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context  "when the user does not authenticate", :nil_token do
         before do 
           delete :destroy, format: :json, params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
 
@@ -226,7 +207,7 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
         
@@ -234,7 +215,6 @@ RSpec.describe UsersController, type: :controller do
         before do 
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: "False_id" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http not found" do
@@ -242,7 +222,7 @@ RSpec.describe UsersController, type: :controller do
         end
         
         it "The user does not exist" do
-          expect(@json_response['message']).to eq('The user does not exist')
+          expect(json['message']).to eq('The user does not exist')
         end
       end
 
@@ -250,7 +230,6 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: @user1.id }
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http unauthorized" do
@@ -258,7 +237,7 @@ RSpec.describe UsersController, type: :controller do
         end
         
         it "The user cannot modify other users" do
-          expect(@json_response['message']).to eq("You cannot delete other users")
+          expect(json['message']).to eq("You cannot delete other users")
         end
       end
     end
@@ -271,7 +250,6 @@ RSpec.describe UsersController, type: :controller do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           @photo_path = "www.photo_path.com"
           put :update_photo_path, format: :json, params: { id: @user.id, photo_path: @photo_path }
-          @json_response = JSON.parse(response.body)
         end
   
         it "returns http no content" do
@@ -279,11 +257,11 @@ RSpec.describe UsersController, type: :controller do
         end
   
         it "The photo path has been updated correctly" do
-          expect(@json_response['message']).to eq('The photo path has been updated correctly')
+          expect(json['message']).to eq('The photo path has been updated correctly')
         end
   
         it "JSON body response contains expected user photo path" do
-          expect(@json_response['photo_path']).to eq(@photo_path)
+          expect(json['photo_path']).to eq(@photo_path)
         end
       end
       
@@ -292,18 +270,16 @@ RSpec.describe UsersController, type: :controller do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             put :update_photo_path, format: :json, params: { id: @user.id, full_name: "Joel Alayon" }
-            @json_response = JSON.parse(response.body)
           end
 
           it "The user must pass the correct parameters" do
-            expect(@json_response['message']).to eq("You must pass the parameter 'photo_path' to update it")
+            expect(json['message']).to eq("You must pass the parameter 'photo_path' to update it")
           end
         end
 
-        context "when the user does not authenticate" do
+        context  "when the user does not authenticate", :nil_token do
           before do 
             put :update_photo_path, format: :json, params: { id: @user.id}
-            @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
   
@@ -312,7 +288,7 @@ RSpec.describe UsersController, type: :controller do
           end
   
           it "returns an error if token is nil" do
-            expect(@json_response).to eq(@nil_token)
+            expect(json).to eq(@nil_token)
           end
         end
           
@@ -320,7 +296,6 @@ RSpec.describe UsersController, type: :controller do
           before do 
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             put :update_photo_path, format: :json, params: { id: "False id" }
-            @json_response = JSON.parse(response.body)
           end
           
           it "returns http not found" do
@@ -328,7 +303,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user does not exist" do
-            expect(@json_response['message']).to eq('The user does not exist')
+            expect(json['message']).to eq('The user does not exist')
           end
         end
   
@@ -336,7 +311,6 @@ RSpec.describe UsersController, type: :controller do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             put :update_photo_path, format: :json, params: { id: @user1.id }
-            @json_response = JSON.parse(response.body)
           end
   
           it "returns http unauthorized" do
@@ -344,7 +318,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user cannot modify other users" do
-            expect(@json_response['message']).to eq("You cannot modify other users' photo path")
+            expect(json['message']).to eq("You cannot modify other users' photo path")
           end
         end
       end
@@ -355,7 +329,6 @@ RSpec.describe UsersController, type: :controller do
         before do
           request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :remove_photo_path, format: :json, params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
         end
   
         it "returns http no content" do
@@ -363,15 +336,14 @@ RSpec.describe UsersController, type: :controller do
         end
   
         it "The photo path has been removed" do
-          expect(@json_response['message']).to eq('The photo path has been removed from this user')
+          expect(json['message']).to eq('The photo path has been removed from this user')
         end
       end
 
       context "when invalid" do
-        context "when the user does not authenticate" do
+        context  "when the user does not authenticate", :nil_token do
           before do 
             delete :remove_photo_path, format: :json, params: { id: @user.id }
-            @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
   
@@ -380,7 +352,7 @@ RSpec.describe UsersController, type: :controller do
           end
   
           it "returns an error if token is nil" do
-            expect(@json_response).to eq(@nil_token)
+            expect(json).to eq(@nil_token)
           end
         end
           
@@ -388,7 +360,6 @@ RSpec.describe UsersController, type: :controller do
           before do 
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             delete :remove_photo_path, format: :json, params: { id: "False id" }
-            @json_response = JSON.parse(response.body)
           end
           
           it "returns http not found" do
@@ -396,7 +367,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user does not exist" do
-            expect(@json_response['message']).to eq('The user does not exist')
+            expect(json['message']).to eq('The user does not exist')
           end
         end
   
@@ -404,7 +375,6 @@ RSpec.describe UsersController, type: :controller do
           before do
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             delete :remove_photo_path, format: :json, params: { id: @user1.id }
-            @json_response = JSON.parse(response.body)
           end
   
           it "returns http unauthorized" do
@@ -412,7 +382,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The user cannot modify other users" do
-            expect(@json_response['message']).to eq("You cannot delete other users' photo path")
+            expect(json['message']).to eq("You cannot delete other users' photo path")
           end
         end
         
@@ -422,7 +392,6 @@ RSpec.describe UsersController, type: :controller do
             @token = JsonWebToken.encode(user_id: @user.id)
             request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             delete :remove_photo_path, format: :json, params: { id: @user.id }
-            @json_response = JSON.parse(response.body)
           end
   
           it "returns http unauthorized" do
@@ -430,7 +399,7 @@ RSpec.describe UsersController, type: :controller do
           end
           
           it "The photo path has already been removed" do
-            expect(@json_response['message']).to eq("The photo path has already been removed from this user")
+            expect(json['message']).to eq("The photo path has already been removed from this user")
           end
         end
       end

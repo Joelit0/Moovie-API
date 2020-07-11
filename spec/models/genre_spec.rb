@@ -5,13 +5,13 @@ RSpec.describe Genre, type: :model do
     described_class.new(name: "Horror")
   }
 
-  context "when valid" do
+  context "when valid", :nil_token do
     it "is valid with valid attributes" do
       expect(subject).to be_valid
     end
   end
   
-  context "when invalid" do
+  context "when invalid", :nil_token do
     it "is not valid without a name" do
       subject.name = nil
       expect(subject).to_not be_valid
