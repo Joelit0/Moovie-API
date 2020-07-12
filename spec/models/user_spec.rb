@@ -8,13 +8,13 @@ RSpec.describe User, type: :model do
                           photo_path: "www.url.com"
                         )}
 
-  context "when valid", :nil_token do
+  context "when valid" do
     it "is valid with valid attributes" do
       expect(subject).to be_valid
     end
   end
 
-  context "when invalid", :nil_token do
+  context "when invalid" do
     it "is not valid without a email" do
       subject.email = nil
       expect(subject).to_not be_valid

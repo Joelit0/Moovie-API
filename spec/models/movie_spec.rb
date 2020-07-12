@@ -10,13 +10,13 @@ RSpec.describe Movie, type: :model do
                           backdrop_url: "https://m.media-amazon.com/images",
                           imdb_id: "3782")}
 
-  context "when valid", :nil_token do
+  context "when valid" do
     it "is valid with valid attributes" do
       expect(subject).to be_valid
     end
   end
   
-  context "when invalid", :nil_token do
+  context "when invalid" do
     it "is not valid without a title" do
       subject.title = nil
       expect(subject).to_not be_valid

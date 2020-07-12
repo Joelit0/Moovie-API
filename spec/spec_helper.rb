@@ -21,7 +21,7 @@ RSpec.configure do |config|
   config.include ApiHelper, type: :api
   config.include Requests::JsonHelpers
 
-  config.before(:each) do |test|
+  config.before(:each, type: :controller) do |test|
     @user = create(:user)
     @user1 = create(:user)
     @token = JsonWebToken.encode(user_id: @user.id)
