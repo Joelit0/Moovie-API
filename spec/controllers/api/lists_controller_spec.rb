@@ -2,19 +2,14 @@ require 'rails_helper'
 
 RSpec.describe ListsController, type: :controller do
   before do
-    @user = create(:user)
-    @user1 = create(:user)
     @list = create(:list, user_id: @user.id)
     @list1 = create(:list, user_id: @user1.id)
-    @token = JsonWebToken.encode(user_id: @user.id)
   end
   
   describe "GET #index" do
     context "when valid" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :index, format: :json, params: { id: @user.id }
-        @json_response = JSON.parse(response.body)
       end
       
       it "returns http success" do
@@ -22,35 +17,34 @@ RSpec.describe ListsController, type: :controller do
       end
       
       it "JSON body response contains expected lists attributes" do
-        expect(@json_response.first.keys).to match_array(["created_at", "description", "id", "name", "public", "updated_at", "user_id"])
+        expect(json.first.keys).to match_array(["created_at", "description", "id", "name", "public", "updated_at", "user_id"])
       end
 
       it "JSON body response contains expected list name" do
-        expect(@json_response.first['name']).to eq(@list.name)
+        expect(json.first['name']).to eq(@list.name)
       end
       
       it "JSON body response contains expected list description" do
-        expect(@json_response.first['description']).to eq(@list.description)
+        expect(json.first['description']).to eq(@list.description)
       end
 
       it "JSON body response contains expected list id" do
-        expect(@json_response.first['id']).to eq(@list.id)
+        expect(json.first['id']).to eq(@list.id)
       end
 
       it "JSON body response contains expected list state" do
-        expect(@json_response.first['public']).to eq(@list.public)
+        expect(json.first['public']).to eq(@list.public)
       end
 
       it "JSON body response contains user id of expected list" do
-        expect(@json_response.first['user_id']).to eq(@user.id)
+        expect(json.first['user_id']).to eq(@user.id)
       end
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context "when the user does not authenticate", :nil_token do
         before do
           get :index, format: :json, params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
   
@@ -59,15 +53,13 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
 
       context "when the user does not exist" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           get :index, format: :json, params: { id: "False id" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http unauthorized" do
@@ -75,22 +67,22 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "The user does not exist" do
-          expect(@json_response['message']).to eq('The user does not exist')
+          expect(json['message']).to eq('The user does not exist')
         end
       end
     end
 
     context "when the user's token does not match the user to display" do
-      before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+      before do      
         get :index, format: :json, params: { id: @user1.id }
-        @json_response = JSON.parse(response.body)
       end
+
       it "returns http unauthorized" do
         expect(response).to have_http_status(:unauthorized)
       end
-      it "The user does not exist" do
-        expect(@json_response['message']).to eq("You cannot see other users' lists")
+      
+      it "The user cannot modify other users" do
+        expect(json['message']).to eq("You cannot see other users' lists")
       end
     end
   end
@@ -98,9 +90,7 @@ RSpec.describe ListsController, type: :controller do
   describe "GET #show" do
     context "when valid" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :show, format: :json, params: { id: @list.id }
-        @json_response = JSON.parse(response.body)
       end
 
       it "returns http success" do
@@ -108,35 +98,34 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "JSON body response contains expected lists attributes" do
-        expect(@json_response.keys).to match_array(["created_at", "description", "id", "name", "public", "updated_at", "user_id", "movies"])
+        expect(json.keys).to match_array(["created_at", "description", "id", "name", "public", "updated_at", "user_id", "movies"])
       end
       
       it "JSON body response contains expected list name" do
-        expect(@json_response['name']).to eq(@list.name)
+        expect(json['name']).to eq(@list.name)
       end
       
       it "JSON body response contains expected list description" do
-        expect(@json_response['description']).to eq(@list.description)
+        expect(json['description']).to eq(@list.description)
       end
 
       it "JSON body response contains expected list id" do
-        expect(@json_response['id']).to eq(@list.id)
+        expect(json['id']).to eq(@list.id)
       end
 
       it "JSON body response contains expected list state" do
-        expect(@json_response['public']).to eq(@list.public)
+        expect(json['public']).to eq(@list.public)
       end
 
       it "JSON body response contains user id of expected list" do
-        expect(@json_response['user_id']).to eq(@user.id)
+        expect(json['user_id']).to eq(@user.id)
       end
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context "when the user does not authenticate", :nil_token do
         before do
           get :show, format: :json, params: { id: @user.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
   
@@ -145,16 +134,14 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
     end
     
     context "when the list does not exist" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :show, format: :json, params: { id: "False id" }
-        @json_response = JSON.parse(response.body)
       end
       
       it "returns http unauthorized" do
@@ -162,21 +149,19 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "The user does not exist" do
-        expect(@json_response['message']).to eq('The list does not exist')
+        expect(json['message']).to eq('The list does not exist')
       end
     end
 
     context "when the user's token does not match the user to display" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         get :show, format: :json, params: { id: @list1.id }
-        @json_response = JSON.parse(response.body)
       end
       it "returns http unauthorized" do
         expect(response).to have_http_status(:unauthorized)
       end
       it "The user does not exist" do
-        expect(@json_response['message']).to eq("You cannot see other users' lists")
+        expect(json['message']).to eq("You cannot see other users' lists")
       end
     end
   end
@@ -248,10 +233,8 @@ RSpec.describe ListsController, type: :controller do
   describe "PUT #update" do
     context "when valid" do
       before do
-        request.headers["AUTHORIZATION"] = "Bearer #{@token}"
         @new_name = "New name"
         put :update, format: :json, params: { id: @list.id, name: @new_name }
-        @json_response = JSON.parse(response.body)
       end
 
       it "returns http no content" do
@@ -259,19 +242,18 @@ RSpec.describe ListsController, type: :controller do
       end
 
       it "The list has been updated successfully" do
-        expect(@json_response['message']).to eq('Updated list')
+        expect(json['message']).to eq('Updated list')
       end
 
       it "JSON body response contains expected list name" do
-        expect(@json_response['data']['name']).to eq(@new_name)
+        expect(json['data']['name']).to eq(@new_name)
       end
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context "when the user does not authenticate", :nil_token do
         before do
           put :update, format: :json, params: { id: @list.id, name: "New name" }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
   
@@ -280,15 +262,13 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
       
       context "when the list does not exist" do
-        before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        before do 
           put :update, format: :json, params: { id: "False id", name: "New name" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http unauthorized" do
@@ -296,15 +276,13 @@ RSpec.describe ListsController, type: :controller do
         end
   
         it "The list does not exist" do
-          expect(@json_response['message']).to eq('The list does not exist')
+          expect(json['message']).to eq('The list does not exist')
         end
       end
       
       context "when the user's token does not match the user to display" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           put :update, format: :json, params: { id: @list1.id, name: "New name" }
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http unauthorized" do
@@ -312,7 +290,7 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "The user does not exist" do
-          expect(@json_response['message']).to eq("You cannot update other users lists")
+          expect(json['message']).to eq("You cannot update other users lists")
         end
       end
     end
@@ -322,30 +300,24 @@ RSpec.describe ListsController, type: :controller do
     context "when valid" do
       context "when the list has been deleted " do
         before do 
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: @list.id }
-          @json_response = JSON.parse(response.body)
         end
 
         it "The list has been deleted successfully" do
-          expect(@json_response['message']).to eq('The list has been deleted')
+          expect(json['message']).to eq('The list has been deleted')
         end
 
-        it "The list doesn't exist anymore" do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
+        it "The list doesn't exist anymore" do 
           get :show, format: :json, params: { id: @list.id }
-          @json_response = JSON.parse(response.body)
-
-          expect(@json_response['message']).to eq('The list does not exist')
+          expect(json['message']).to eq('The list does not exist')
         end
       end     
     end
 
     context "when invalid" do
-      context "when the user does not authenticate" do
+      context "when the user does not authenticate", :nil_token do
         before do 
           delete :destroy, format: :json, params: { id: @list.id }
-          @json_response = JSON.parse(response.body)
           @nil_token = { "errors" => "Nil JSON web token" }
         end
 
@@ -354,15 +326,13 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "returns an error if token is nil" do
-          expect(@json_response).to eq(@nil_token)
+          expect(json).to eq(@nil_token)
         end
       end
       
       context "when the list cannot be deleted" do
         before do 
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: "False_id" }
-          @json_response = JSON.parse(response.body)
         end
         
         it "returns http not found" do
@@ -370,15 +340,13 @@ RSpec.describe ListsController, type: :controller do
         end
         
         it "The list does not exist" do
-          expect(@json_response['message']).to eq('The list does not exist')
+          expect(json['message']).to eq('The list does not exist')
         end
       end
       
       context "when the user's token does not match the user to display" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           delete :destroy, format: :json, params: { id: @list1.id }
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http unauthorized" do
@@ -386,7 +354,7 @@ RSpec.describe ListsController, type: :controller do
         end
         
         it "The user does not exist" do
-          expect(@json_response['message']).to eq("You cannot delete other users lists")
+          expect(json['message']).to eq("You cannot delete other users lists")
         end
       end
     end
@@ -394,20 +362,15 @@ RSpec.describe ListsController, type: :controller do
 
   describe "Movies and Lists" do
     before do
-      @user = create(:user)
       @movie = create(:movie)
       @list = create(:list, user_id: @user.id)
-      @user1 = create(:user)
       @list1 = create(:list, user_id: @user1.id)
-      @token = JsonWebToken.encode(user_id: @user.id)
     end
     
     describe "PUT #add_movie" do
       context "when valid" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-          @json_response = JSON.parse(response.body)
         end
 
         it "returns http no content" do
@@ -415,15 +378,14 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "The movie has been successfully added to the list" do
-          expect(@json_response['message']).to eq('The movie has been successfully added to the list')
+          expect(json['message']).to eq('The movie has been successfully added to the list')
         end
       end
     
       context "when invalid" do
-        context "when the user does not authenticate" do
+        context "when the user does not authenticate", :nil_token do
           before do
             put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-            @json_response = JSON.parse(response.body)
             @nil_token = { "errors" => "Nil JSON web token" }
           end
     
@@ -432,15 +394,13 @@ RSpec.describe ListsController, type: :controller do
           end
   
           it "returns an error if token is nil" do
-            expect(@json_response).to eq(@nil_token)
+            expect(json).to eq(@nil_token)
           end
         end
         
         context "when the list does not exist" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             put :add_movie, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
-            @json_response = JSON.parse(response.body)
           end
           
           it "returns http unauthorized" do
@@ -448,15 +408,13 @@ RSpec.describe ListsController, type: :controller do
           end
     
           it "The list  does not exist" do
-            expect(@json_response['message']).to eq('The list does not exist')
+            expect(json['message']).to eq('The list does not exist')
           end
         end
 
         context "when the movie does not exist" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             put :add_movie, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
-            @json_response = JSON.parse(response.body)
           end
           
           it "returns http unauthorized" do
@@ -464,15 +422,13 @@ RSpec.describe ListsController, type: :controller do
           end
     
           it "The movie does not exist" do
-            expect(@json_response['message']).to eq('The movie does not exist')
+            expect(json['message']).to eq('The movie does not exist')
           end
         end
         
         context "when the user's token does not match the user to display" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
-            @json_response = JSON.parse(response.body)
+            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }   
           end
 
           it "returns http unauthorized" do
@@ -480,16 +436,14 @@ RSpec.describe ListsController, type: :controller do
           end
 
           it "The user does not exist" do
-            expect(@json_response['message']).to eq("You cannot add movies to other users' lists")
+            expect(json['message']).to eq("You cannot add movies to other users' lists")
           end
         end
         
         context "when the movie is already added to the list" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             @list = create(:list, user_id: @user.id, movies: [@movie])
-            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-            @json_response = JSON.parse(response.body)
+            put :add_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }      
           end
 
           it "returns http unauthorized" do
@@ -497,7 +451,7 @@ RSpec.describe ListsController, type: :controller do
           end
           
           it "The movie is already added to the list" do
-            expect(@json_response['message']).to eq("The movie has already been added to this list")
+            expect(json['message']).to eq("The movie has already been added to this list")
           end
         end
       end
@@ -506,10 +460,8 @@ RSpec.describe ListsController, type: :controller do
     describe "DELETE #remove_movie" do
       context "when valid" do
         before do
-          request.headers["AUTHORIZATION"] = "Bearer #{@token}"
           @list = create(:list, user_id: @user.id, movies: [@movie])
-          delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-          @json_response = JSON.parse(response.body)
+          delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }         
         end
 
         it "returns http no content" do
@@ -517,15 +469,14 @@ RSpec.describe ListsController, type: :controller do
         end
 
         it "The movie has been successfully removed from the list" do
-          expect(@json_response['message']).to eq('The movie has been successfully removed from this list')
+          expect(json['message']).to eq('The movie has been successfully removed from this list')
         end
       end
       
       context "when invalid" do
-        context "when the user does not authenticate" do
+        context "when the user does not authenticate", :nil_token do
           before do
-            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-            @json_response = JSON.parse(response.body)
+            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }          
             @nil_token = { "errors" => "Nil JSON web token" }
           end
     
@@ -534,15 +485,13 @@ RSpec.describe ListsController, type: :controller do
           end
   
           it "returns an error if token is nil" do
-            expect(@json_response).to eq(@nil_token)
+            expect(json).to eq(@nil_token)
           end
         end
         
         context "when the movie does not exist" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie, format: :json, params:  { list_id: @list.id, movie_id: "False id" }
-            @json_response = JSON.parse(response.body)
+            delete :remove_movie, format: :json, params:  { list_id: @list.id, movie_id: "False id" }            
           end
           
           it "returns http unauthorized" do
@@ -550,15 +499,13 @@ RSpec.describe ListsController, type: :controller do
           end
     
           it "The movie does not exist" do
-            expect(@json_response['message']).to eq('The movie does not exist')
+            expect(json['message']).to eq('The movie does not exist')
           end
         end
 
         context "when the list does not exist" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie, format: :json, params:  { list_id: "False id", movie_id: @movie.id }
-            @json_response = JSON.parse(response.body)
+            delete :remove_movie, format: :json, params:  { list_id: "False id", movie_id: @movie.id }           
           end
           
           it "returns http unauthorized" do
@@ -566,15 +513,13 @@ RSpec.describe ListsController, type: :controller do
           end
     
           it "The list does not exist" do
-            expect(@json_response['message']).to eq('The list does not exist')
+            expect(json['message']).to eq('The list does not exist')
           end
         end
         
         context "when the user's token does not match the user to display" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
-            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }
-            @json_response = JSON.parse(response.body)
+            delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list1.id }            
           end
 
           it "returns http unauthorized" do
@@ -582,16 +527,14 @@ RSpec.describe ListsController, type: :controller do
           end
 
           it "The user does not exist" do
-            expect(@json_response['message']).to eq("You cannot delete movies from other users' lists")
+            expect(json['message']).to eq("You cannot delete movies from other users' lists")
           end
         end
 
         context "when the movie is not in the list" do
           before do
-            request.headers["AUTHORIZATION"] = "Bearer #{@token}"
             @list = create(:list, user_id: @user.id)
             delete :remove_movie, format: :json, params: { movie_id: @movie.id, list_id: @list.id }
-            @json_response = JSON.parse(response.body)
           end
 
           it "returns http unauthorized" do
@@ -599,7 +542,7 @@ RSpec.describe ListsController, type: :controller do
           end
           
           it "The movie is already removed from the list" do
-            expect(@json_response['message']).to eq("The movie is not in this list")
+            expect(json['message']).to eq("The movie is not in this list")
           end
         end
       end

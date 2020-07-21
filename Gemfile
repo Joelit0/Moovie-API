@@ -31,6 +31,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # gem 'rack-cors'
 gem "factory_bot_rails"
 
+group :test do
+  gem 'database_cleaner-active_record'
+end
+
 group :development, :test do
   gem 'factory_bot_rails'
 end

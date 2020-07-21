@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Movie, type: :model do
   subject { 
@@ -15,6 +15,7 @@ RSpec.describe Movie, type: :model do
       expect(subject).to be_valid
     end
   end
+  
   context "when invalid" do
     it "is not valid without a title" do
       subject.title = nil

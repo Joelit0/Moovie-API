@@ -1,10 +1,10 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe List, type: :model do
   before do
     @user = create(:user)
   end
-
+  
   subject { 
     described_class.new(  name: "Movies List",
                           description: "My list",
@@ -16,6 +16,7 @@ RSpec.describe List, type: :model do
       expect(subject).to be_valid
     end
   end
+
   context "when invalid" do
     it "is not valid without a name" do
       subject.name = nil
