@@ -33,6 +33,18 @@ bundle exec rails s
 
 And now you can visit the site with the URL http://localhost:3000
 
+### Tests
 
 ##### 1. Run tests
 
+Run the following commands to run tests.
+
+```ruby
+bundle exec rspec
+```
+
+And you should receive:
+
+```bash
+196 examples, 0 failures
+```
