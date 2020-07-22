@@ -14,15 +14,7 @@ The setups steps expect following tools installed on the system.
 git clone git@github.com:JoelAlayon123/Moovie-API.git; cd Moovie-API
 ```
 
-##### 2. Create database.yml file
-
-Copy the sample database.yml file and edit the database configuration as required.
-
-```bash
-cp config/database.yml.sample config/database.yml
-```
-
-##### 3. Create and setup the database
+##### 2. Create and setup the database
 
 Run the following commands to create and setup the database.
 
@@ -31,7 +23,7 @@ bundle exec rake db:create
 bundle exec rake db:setup
 ```
 
-##### 4. Start the Rails server
+##### 3. Start the Rails server
 
 You can start the rails server using the command given below.
 
@@ -40,3 +32,7 @@ bundle exec rails s
 ```
 
 And now you can visit the site with the URL http://localhost:3000
+
+
+##### 1. Run tests
+
