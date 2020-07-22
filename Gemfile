@@ -9,7 +9,7 @@ gem 'pg'
 gem 'will_paginate', '~> 3.1.0'
 gem 'jquery-rails'
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '~> 4.3'
 # Devise
 gem 'devise'
 gem 'jwt'
