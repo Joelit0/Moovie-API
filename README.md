@@ -11,11 +11,7 @@ The setups steps expect following tools installed on the system.
 ##### 1. Check out the repository
 
 ```bash
-git clone git@github.com:JoelAlayon123/Moovie-API.git
-```
-
-```bash
-cd Moovie-API
+git clone git@github.com:JoelAlayon123/Moovie-API.git; cd Moovie-API
 ```
 
 ##### 2. Create database.yml file
