@@ -8,8 +8,18 @@ gem 'rails', '~> 6.0.2', '>= 6.0.2.2'
 gem 'pg'
 gem 'will_paginate', '~> 3.1.0'
 gem 'jquery-rails'
-# Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem "rack", ">= 2.2.3"
+gem "websocket-extensions", ">= 0.1.5"
+
+# Action
+gem "actionview", ">= 6.0.3.1"
+gem "actionpack", ">= 6.0.3.2"
+gem "activestorage", ">= 6.0.3.1"
+gem "activesupport", ">= 6.0.3.1"
+
+# Puma
+gem "puma", ">= 4.3.5"
+
 # Devise
 gem 'devise'
 gem 'jwt'
