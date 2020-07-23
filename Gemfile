@@ -10,10 +10,10 @@ gem "rack"
 gem "websocket-extensions"
 
 # Action
-# gem "actionview", ">= 6.0.3.1"
-# gem "actionpack", ">= 6.0.3.2"
-# gem "activestorage", ">= 6.0.3.1"
-# gem "activesupport", ">= 6.0.3.1"
+gem "actionview"
+gem "actionpack"
+gem "activestorage"
+gem "activesupport"
 
 # Puma
 gem "puma"

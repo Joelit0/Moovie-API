@@ -197,6 +197,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  actionpack
+  actionview
+  activestorage
+  activesupport
   bcrypt
   bootsnap
   byebug
