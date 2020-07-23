@@ -7,12 +7,10 @@ The setups steps expect following tools installed on the system.
 - Github
 - Ruby [2.7.1](https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/)
 - Rails [6.0.2.2](https://rubygems.org/gems/rails/versions/6.0.2.2)
-##### Postgresql
-In this API I am using PostgreSQL as a database.
+- PostgreSQL: [Download here](https://www.postgresql.org/download/)
+    
 
--PostgreSQL: [Download here](https://www.postgresql.org/download/)
-
-When you install everything, run the server.
+When you install everything, run the PostrgeSQL server.
 
 ##### 1. Check out the repository
 
