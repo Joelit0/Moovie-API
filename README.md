@@ -7,14 +7,27 @@ The setups steps expect following tools installed on the system.
 - Github
 - Ruby [2.7.1](https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/)
 - Rails [6.0.2.2](https://rubygems.org/gems/rails/versions/6.0.2.2)
+##### Postgresql
+In this API I am using PostgreSQL as a database.
+
+-PostgreSQL: [Download here](https://www.postgresql.org/download/)
+
+When you install everything, run the server.
 
 ##### 1. Check out the repository
 
 ```bash
 git clone git@github.com:JoelAlayon123/Moovie-API.git; cd Moovie-API
 ```
+##### 2. Install dependencies
 
-##### 2. Create and setup the database
+Run the following commands to install the gems.
+
+```bash
+bundle install
+```
+
+##### 3. Create and setup the database
 
 Run the following commands to create and setup the database.
 
@@ -23,7 +36,7 @@ bundle exec rake db:create
 bundle exec rake db:setup
 ```
 
-##### 3. Start the Rails server
+##### 4. Start the Rails server
 
 You can start the rails server using the command given below.
 
