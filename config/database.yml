@@ -7,3 +7,5 @@ test:
     adapter: postgresql
     database: moovie_db_test
     host: localhost
+    username: postgres
+    password: root
