@@ -2,6 +2,8 @@ development:
     adapter: postgresql
     database: moovie_db_development
     host: localhost
+     username: postgres
+    password: root
 
 test: 
     adapter: postgresql
