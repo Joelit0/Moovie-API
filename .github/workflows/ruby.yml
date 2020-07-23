@@ -31,7 +31,6 @@ jobs:
       run: bundle install
     
     - name: Create database
-      run: bundle exec rake db:create
       run: bundle exec rake db:setup
 
     - name: Run tests
