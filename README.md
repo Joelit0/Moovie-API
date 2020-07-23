@@ -30,7 +30,6 @@ bundle install
 Run the following commands to create and setup the database.
 
 ```ruby
-bundle exec rake db:create
 bundle exec rake db:setup
 ```
 
