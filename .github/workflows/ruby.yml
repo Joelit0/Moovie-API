@@ -13,11 +13,10 @@ on:
   pull_request:
     branches: [ master ]
 
-services:
-  postgres:
-    ports:
-      - 5432/tcp
-      
+postgres:
+  ports:
+    - 5432/tcp
+
 jobs:
   test:
 
