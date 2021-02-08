@@ -21,7 +21,7 @@ git clone git@github.com:JoelAlayon123/Moovie-API.git; cd Moovie-API
 
 Run the following commands to install the gems.
 
-```bash
+```ruby
 bundle install
 ```
 
