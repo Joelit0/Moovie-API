@@ -4,7 +4,6 @@
 
 The setups steps expect following tools installed on the system.
 
-- Github
 - Ruby [2.7.1](https://www.ruby-lang.org/en/news/2020/03/31/ruby-2-7-1-released/)
 - Rails [6.0.2.2](https://rubygems.org/gems/rails/versions/6.0.2.2)
 - PostgreSQL: [Download here](https://www.postgresql.org/download/)
