@@ -58,3 +58,7 @@ And you should receive:
 ```bash
 196 examples, 0 failures
 ```
+
+### How to use
+
+You can see the [documentation](https://github.com/Joelit0/Moovie-API/wiki) to see information on how to use it
